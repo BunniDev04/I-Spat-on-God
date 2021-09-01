@@ -36602,7 +36602,7 @@ Obj21_Index:	dc.w Obj21_Main-Obj21_Index
 
 Obj21_Main:				; XREF: Obj21_Main
 		addq.b	#2,$24(a0)
-		move.w	#$100,8(a0)
+		move.w	#$F8,8(a0)
 		move.w	#$97,$A(a0)
 		move.l	#Map_obj21,4(a0)
 		move.w	#$6CA,2(a0)
