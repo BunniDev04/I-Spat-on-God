@@ -3,8 +3,8 @@
 ; ---------------------------------------------------------------------------
 		dc.w SonAni_Walk-SonicAniData
 		dc.w SonAni_Run-SonicAniData
-		dc.w SonAni_Roll-SonicAniData
-		dc.w SonAni_Roll2-SonicAniData
+		dc.w MarioAni_Jump-SonicAniData
+		dc.w MarioAni_Fall-SonicAniData
 		dc.w SonAni_Push-SonicAniData
 		dc.w SonAni_Wait-SonicAniData
 		dc.w SonAni_Balance-SonicAniData
@@ -34,8 +34,8 @@
 		dc.w SonAni_Float4-SonicAniData
 SonAni_Walk:	dc.b $FF, 1, 4, $FF
 SonAni_Run:	dc.b $FF, 5, 6, $FF
-SonAni_Roll:	dc.b $3F, $D, $FF, 0
-SonAni_Roll2:	dc.b $FE, $2E, $2F, $32, $30, $31, $32,	$FF
+MarioAni_Jump:	dc.b $3F, $D, $FF, 0
+MarioAni_Fall:	dc.b $3F, $E, $FF, 0
 SonAni_Push:	dc.b $FD, $45, $46, $47, $48, $FF, $FF,	$FF
 SonAni_Wait:	dc.b $3F, 1, $FF, 0
 SonAni_Balance:	dc.b $1F, $3A, $3B, $FF

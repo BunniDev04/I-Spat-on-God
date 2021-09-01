@@ -23700,6 +23700,7 @@ Obj01_MdNormal:				; XREF: Obj01_Modes
 
 Obj01_MdJump:				; XREF: Obj01_Modes
 		bsr.w	Sonic_JumpHeight
+		bsr.w	Mario_Fall
 		bsr.w	Sonic_ChgJumpDir
 		bsr.w	Sonic_LevelBound
 		jsr	ObjectFall
@@ -23726,6 +23727,7 @@ Obj01_MdRoll:				; XREF: Obj01_Modes
 
 Obj01_MdJump2:				; XREF: Obj01_Modes
 		bsr.w	Sonic_JumpHeight
+		bsr.w	Mario_Fall
 		bsr.w	Sonic_ChgJumpDir
 		bsr.w	Sonic_LevelBound
 		jsr	ObjectFall
@@ -24441,6 +24443,18 @@ loc_134C4:
 locret_134D2:
 		rts	
 ; End of function Sonic_JumpHeight
+
+Mario_Fall:
+		btst	#1,$22(a0)	; Check if Mario is midair
+		beq.s	@return
+		btst	#3,$22(a0)	; But if he's in the air and not supposed to fall
+		bne.s	@return
+		tst.w	$12(a0)	; Check if he's going downwards
+		blt.s	@return
+		move.b	#3,$1C(a0)
+
+	@return:
+		rts
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to	slow Sonic walking up a	slope
