@@ -33,9 +33,9 @@ Vectors:	dc.l $FFFE00, EntryPoint, BusError, AddressError
 		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap
 		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap
 Console:	dc.b 'SEGA MEGA DRIVE ' ; Hardware system ID
-Date:		dc.b '(C)SEGA 1991.APR' ; Release date
-Title_Local:	dc.b 'SONIC THE               HEDGEHOG                ' ; Domestic name
-Title_Int:	dc.b 'SONIC THE               HEDGEHOG                ' ; International name
+Date:		dc.b '(R)BNDV 2021.SEP' ; Release date
+Title_Local:	dc.b 'I SPAT ON GOD                                   ' ; Domestic name
+Title_Int:	dc.b 'I SPAT ON GOD                                   ' ; International name
 Serial:		dc.b 'GM 00001009-00'   ; Serial/version number
 Checksum:	dc.w 0
 		dc.b 'J               ' ; I/O support
@@ -1045,7 +1045,7 @@ loc_128E:
 VDPSetupArray:	dc.w $8004, $8134, $8230, $8328	; XREF: VDPSetupGame
 		dc.w $8407, $857C, $8600, $8700
 		dc.w $8800, $8900, $8A00, $8B00
-		dc.w $8C81, $8D3F, $8E00, $8F02
+		dc.w $8C00, $8D3F, $8E00, $8F02
 		dc.w $9001, $9100, $9200
 
 ; ---------------------------------------------------------------------------
@@ -23487,8 +23487,8 @@ Obj01_Index:	dc.w Obj01_Main-Obj01_Index
 
 Obj01_Main:				; XREF: Obj01_Index
 		addq.b	#2,$24(a0)
-		move.b	#$13,$16(a0)
-		move.b	#9,$17(a0)
+		move.b	#10,$16(a0)
+		move.b	#6,$17(a0)
 		move.l	#Map_Sonic,4(a0)
 		move.w	#$780,2(a0)
 		move.b	#2,$18(a0)
@@ -24080,8 +24080,8 @@ loc_131AA:
 		tst.w	$14(a0)		; is Sonic moving?
 		bne.s	loc_131CC	; if yes, branch
 		bclr	#2,$22(a0)
-		move.b	#$13,$16(a0)
-		move.b	#9,$17(a0)
+		move.b	#10,$16(a0)
+		move.b	#6,$17(a0)
 		move.b	#5,$1C(a0)	; use "standing" animation
 		subq.w	#5,$C(a0)
 
@@ -24390,8 +24390,8 @@ loc_1341C:
 		clr.b	$38(a0)
 		move.w	#$A0,d0
 		jsr	(PlaySound_Special).l ;	play jumping sound
-		move.b	#$13,$16(a0)
-		move.b	#9,$17(a0)
+		move.b	#10,$16(a0)
+		move.b	#6,$17(a0)
 		btst	#2,$22(a0)
 		bne.s	loc_13490
 		move.b	#$E,$16(a0)
@@ -24811,8 +24811,8 @@ loc_137AE:
 		btst	#2,$22(a0)
 		beq.s	loc_137E4
 		bclr	#2,$22(a0)
-		move.b	#$13,$16(a0)
-		move.b	#9,$17(a0)
+		move.b	#10,$16(a0)
+		move.b	#6,$17(a0)
 		move.b	#0,$1C(a0)	; use running/walking animation
 		subq.w	#5,$C(a0)
 
@@ -25092,7 +25092,7 @@ SAnim_WalkRun:				; XREF: SAnim_Do
 		subq.b	#1,$1E(a0)	; subtract 1 from frame	duration
 		bpl.s	SAnim_Delay	; if time remains, branch
 		addq.b	#1,d0		; is animation walking/running?
-		bne.w	SAnim_RollJump	; if not, branch
+		bne.w	SAnim_Do2	; if not, branch
 		moveq	#0,d1
 		move.b	$26(a0),d0	; get Sonic's angle
 		move.b	$22(a0),d2
@@ -25109,8 +25109,6 @@ loc_13A78:
 		andi.b	#$FC,1(a0)
 		eor.b	d1,d2
 		or.b	d2,1(a0)
-		btst	#5,$22(a0)
-		bne.w	SAnim_Push
 		lsr.b	#4,d0		; divide angle by $10
 		andi.b	#6,d0		; angle	must be	0, 2, 4	or 6
 		move.w	$14(a0),d2	; get Sonic's speed
@@ -25140,56 +25138,7 @@ loc_13AC2:
 		bsr.w	SAnim_Do2
 		add.b	d3,$1A(a0)	; modify frame number
 		rts	
-; ===========================================================================
 
-SAnim_RollJump:				; XREF: SAnim_WalkRun
-		addq.b	#1,d0		; is animation rolling/jumping?
-		bne.s	SAnim_Push	; if not, branch
-		move.w	$14(a0),d2	; get Sonic's speed
-		bpl.s	loc_13ADE
-		neg.w	d2
-
-loc_13ADE:
-		lea	(SonAni_Roll2).l,a1 ; use fast animation
-		cmpi.w	#$600,d2	; is Sonic moving fast?
-		bcc.s	loc_13AF0	; if yes, branch
-		lea	(SonAni_Roll).l,a1 ; use slower	animation
-
-loc_13AF0:
-		neg.w	d2
-		addi.w	#$400,d2
-		bpl.s	loc_13AFA
-		moveq	#0,d2
-
-loc_13AFA:
-		lsr.w	#8,d2
-		move.b	d2,$1E(a0)	; modify frame duration
-		move.b	$22(a0),d1
-		andi.b	#1,d1
-		andi.b	#$FC,1(a0)
-		or.b	d1,1(a0)
-		bra.w	SAnim_Do2
-; ===========================================================================
-
-SAnim_Push:				; XREF: SAnim_RollJump
-		move.w	$14(a0),d2	; get Sonic's speed
-		bmi.s	loc_13B1E
-		neg.w	d2
-
-loc_13B1E:
-		addi.w	#$800,d2
-		bpl.s	loc_13B26
-		moveq	#0,d2
-
-loc_13B26:
-		lsr.w	#6,d2
-		move.b	d2,$1E(a0)	; modify frame duration
-		lea	(SonAni_Push).l,a1
-		move.b	$22(a0),d1
-		andi.b	#1,d1
-		andi.b	#$FC,1(a0)
-		or.b	d1,1(a0)
-		bra.w	SAnim_Do2
 ; End of function Sonic_Animate
 
 ; ===========================================================================
@@ -29614,7 +29563,7 @@ Obj8A_Index:	dc.w Obj8A_Main-Obj8A_Index
 
 Obj8A_Main:				; XREF: Obj8A_Index
 		addq.b	#2,$24(a0)
-		move.w	#$120,8(a0)
+		move.w	#$100,8(a0)
 		move.w	#$F0,$A(a0)
 		move.l	#Map_obj8A,4(a0)
 		move.w	#$5A0,2(a0)
@@ -29625,7 +29574,6 @@ Obj8A_Main:				; XREF: Obj8A_Index
 		cmpi.b	#4,($FFFFF600).w ; is the scene	number 04 (title screen)?
 		bne.s	Obj8A_Display	; if not, branch
 		move.w	#$A6,2(a0)
-		move.b	#$A,$1A(a0)	; display "SONIC TEAM PRESENTS"
 		tst.b	($FFFFFFE3).w	; is hidden credits cheat on?
 		beq.s	Obj8A_Display	; if not, branch
 		cmpi.b	#$72,($FFFFF604).w ; is	Start+A+C+Down being pressed?
@@ -36649,36 +36597,19 @@ Obj21:					; XREF: Obj_Index
 		jmp	Obj21_Index(pc,d1.w)
 ; ===========================================================================
 Obj21_Index:	dc.w Obj21_Main-Obj21_Index
-		dc.w Obj21_Flash-Obj21_Index
+		dc.w Obj21_Display-Obj21_Index
 ; ===========================================================================
 
 Obj21_Main:				; XREF: Obj21_Main
 		addq.b	#2,$24(a0)
-		move.w	#$90,8(a0)
-		move.w	#$108,$A(a0)
+		move.w	#$100,8(a0)
+		move.w	#$97,$A(a0)
 		move.l	#Map_obj21,4(a0)
 		move.w	#$6CA,2(a0)
 		move.b	#0,1(a0)
 		move.b	#0,$18(a0)
 
-Obj21_Flash:				; XREF: Obj21_Main
-		tst.w	($FFFFFE20).w	; do you have any rings?
-		beq.s	Obj21_Flash2	; if not, branch
-		clr.b	$1A(a0)		; make all counters yellow
-		jmp	DisplaySprite
-; ===========================================================================
-
-Obj21_Flash2:
-		moveq	#0,d0
-		btst	#3,($FFFFFE05).w
-		bne.s	Obj21_Display
-		addq.w	#1,d0		; make ring counter flash red
-		cmpi.b	#9,($FFFFFE23).w ; have	9 minutes elapsed?
-		bne.s	Obj21_Display	; if not, branch
-		addq.w	#2,d0		; make time counter flash red
-
 Obj21_Display:
-		move.b	d0,$1A(a0)
 		jmp	DisplaySprite
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
