@@ -7060,9 +7060,9 @@ locret_65B0:
 ScrollHoriz2:				; XREF: ScrollHoriz
 		move.w	($FFFFD008).w,d0
 		sub.w	($FFFFF700).w,d0
-		subi.w	#$90,d0
+		subi.w	#$78,d0
 		bcs.s	loc_65F6
-		subi.w	#$10,d0
+		subi.w	#10,d0
 		bcc.s	loc_65CC
 		clr.w	($FFFFF73A).w
 		rts	
