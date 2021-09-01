@@ -23690,7 +23690,6 @@ Obj01_MdNormal:				; XREF: Obj01_Modes
 		bsr.w	Sonic_Jump
 		bsr.w	Sonic_SlopeResist
 		bsr.w	Sonic_Move
-		bsr.w	Sonic_Roll
 		bsr.w	Sonic_LevelBound
 		jsr	SpeedToPos
 		bsr.w	Sonic_AnglePos
@@ -23716,8 +23715,6 @@ loc_12E5C:
 
 Obj01_MdRoll:				; XREF: Obj01_Modes
 		bsr.w	Sonic_Jump
-		bsr.w	Sonic_RollRepel
-		bsr.w	Sonic_RollSpeed
 		bsr.w	Sonic_LevelBound
 		jsr	SpeedToPos
 		bsr.w	Sonic_AnglePos
@@ -23772,52 +23769,6 @@ Obj01_NotRight:
 		bne.w	Obj01_ResetScr	; if yes, branch
 		bclr	#5,$22(a0)
 		move.b	#5,$1C(a0)	; use "standing" animation
-		btst	#3,$22(a0)
-		beq.s	Sonic_Balance
-		moveq	#0,d0
-		move.b	$3D(a0),d0
-		lsl.w	#6,d0
-		lea	($FFFFD000).w,a1
-		lea	(a1,d0.w),a1
-		tst.b	$22(a1)
-		bmi.s	Sonic_LookUp
-		moveq	#0,d1
-		move.b	$19(a1),d1
-		move.w	d1,d2
-		add.w	d2,d2
-		subq.w	#4,d2
-		add.w	8(a0),d1
-		sub.w	8(a1),d1
-		cmpi.w	#4,d1
-		blt.s	loc_12F6A
-		cmp.w	d2,d1
-		bge.s	loc_12F5A
-		bra.s	Sonic_LookUp
-; ===========================================================================
-
-Sonic_Balance:
-		jsr	ObjHitFloor
-		cmpi.w	#$C,d1
-		blt.s	Sonic_LookUp
-		cmpi.b	#3,$36(a0)
-		bne.s	loc_12F62
-
-loc_12F5A:
-		bclr	#0,$22(a0)
-		bra.s	loc_12F70
-; ===========================================================================
-
-loc_12F62:
-		cmpi.b	#3,$37(a0)
-		bne.s	Sonic_LookUp
-
-loc_12F6A:
-		bset	#0,$22(a0)
-
-loc_12F70:
-		move.b	#6,$1C(a0)	; use "balancing" animation
-		bra.s	Obj01_ResetScr
-; ===========================================================================
 
 Sonic_LookUp:
 		btst	#0,($FFFFF602).w ; is up being pressed?
@@ -24031,132 +23982,6 @@ locret_1314E:
 ; End of function Sonic_MoveRight
 
 ; ---------------------------------------------------------------------------
-; Subroutine to	change Sonic's speed as he rolls
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-
-Sonic_RollSpeed:			; XREF: Obj01_MdRoll
-		move.w	($FFFFF760).w,d6
-		asl.w	#1,d6
-		move.w	($FFFFF762).w,d5
-		asr.w	#1,d5
-		move.w	($FFFFF764).w,d4
-		asr.w	#2,d4
-		tst.b	($FFFFF7CA).w
-		bne.w	loc_131CC
-		tst.w	$3E(a0)
-		bne.s	loc_13188
-		btst	#2,($FFFFF602).w ; is left being pressed?
-		beq.s	loc_1317C	; if not, branch
-		bsr.w	Sonic_RollLeft
-
-loc_1317C:
-		btst	#3,($FFFFF602).w ; is right being pressed?
-		beq.s	loc_13188	; if not, branch
-		bsr.w	Sonic_RollRight
-
-loc_13188:
-		move.w	$14(a0),d0
-		beq.s	loc_131AA
-		bmi.s	loc_1319E
-		sub.w	d5,d0
-		bcc.s	loc_13198
-		move.w	#0,d0
-
-loc_13198:
-		move.w	d0,$14(a0)
-		bra.s	loc_131AA
-; ===========================================================================
-
-loc_1319E:				; XREF: Sonic_RollSpeed
-		add.w	d5,d0
-		bcc.s	loc_131A6
-		move.w	#0,d0
-
-loc_131A6:
-		move.w	d0,$14(a0)
-
-loc_131AA:
-		tst.w	$14(a0)		; is Sonic moving?
-		bne.s	loc_131CC	; if yes, branch
-		bclr	#2,$22(a0)
-		move.b	#10,$16(a0)
-		move.b	#6,$17(a0)
-		move.b	#5,$1C(a0)	; use "standing" animation
-		subq.w	#5,$C(a0)
-
-loc_131CC:
-		move.b	$26(a0),d0
-		jsr	(CalcSine).l
-		muls.w	$14(a0),d0
-		asr.l	#8,d0
-		move.w	d0,$12(a0)
-		muls.w	$14(a0),d1
-		asr.l	#8,d1
-		cmpi.w	#$1000,d1
-		ble.s	loc_131F0
-		move.w	#$1000,d1
-
-loc_131F0:
-		cmpi.w	#-$1000,d1
-		bge.s	loc_131FA
-		move.w	#-$1000,d1
-
-loc_131FA:
-		move.w	d1,$10(a0)
-		bra.w	loc_1300C
-; End of function Sonic_RollSpeed
-
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-
-Sonic_RollLeft:				; XREF: Sonic_RollSpeed
-		move.w	$14(a0),d0
-		beq.s	loc_1320A
-		bpl.s	loc_13218
-
-loc_1320A:
-		bset	#0,$22(a0)
-		move.b	#2,$1C(a0)	; use "rolling"	animation
-		rts	
-; ===========================================================================
-
-loc_13218:
-		sub.w	d4,d0
-		bcc.s	loc_13220
-		move.w	#-$80,d0
-
-loc_13220:
-		move.w	d0,$14(a0)
-		rts	
-; End of function Sonic_RollLeft
-
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-
-Sonic_RollRight:			; XREF: Sonic_RollSpeed
-		move.w	$14(a0),d0
-		bmi.s	loc_1323A
-		bclr	#0,$22(a0)
-		move.b	#2,$1C(a0)	; use "rolling"	animation
-		rts	
-; ===========================================================================
-
-loc_1323A:
-		add.w	d4,d0
-		bcc.s	loc_13242
-		move.w	#$80,d0
-
-loc_13242:
-		move.w	d0,$14(a0)
-		rts	
-; End of function Sonic_RollRight
-
-; ---------------------------------------------------------------------------
 ; Subroutine to	change Sonic's direction while jumping
 ; ---------------------------------------------------------------------------
 
@@ -24304,55 +24129,6 @@ Boundary_Sides:
 ; End of function Sonic_LevelBound
 
 ; ---------------------------------------------------------------------------
-; Subroutine allowing Sonic to roll when he's moving
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-
-Sonic_Roll:				; XREF: Obj01_MdNormal
-		tst.b	($FFFFF7CA).w
-		bne.s	Obj01_NoRoll
-		move.w	$14(a0),d0
-		bpl.s	loc_13392
-		neg.w	d0
-
-loc_13392:
-		cmpi.w	#$80,d0		; is Sonic moving at $80 speed or faster?
-		bcs.s	Obj01_NoRoll	; if not, branch
-		move.b	($FFFFF602).w,d0
-		andi.b	#$C,d0		; is left/right	being pressed?
-		bne.s	Obj01_NoRoll	; if yes, branch
-		btst	#1,($FFFFF602).w ; is down being pressed?
-		bne.s	Obj01_ChkRoll	; if yes, branch
-
-Obj01_NoRoll:
-		rts	
-; ===========================================================================
-
-Obj01_ChkRoll:
-		btst	#2,$22(a0)	; is Sonic already rolling?
-		beq.s	Obj01_DoRoll	; if not, branch
-		rts	
-; ===========================================================================
-
-Obj01_DoRoll:
-		bset	#2,$22(a0)
-		move.b	#$E,$16(a0)
-		move.b	#7,$17(a0)
-		move.b	#2,$1C(a0)	; use "rolling"	animation
-		addq.w	#5,$C(a0)
-		move.w	#$BE,d0
-		jsr	(PlaySound_Special).l ;	play rolling sound
-		tst.w	$14(a0)
-		bne.s	locret_133E8
-		move.w	#$200,$14(a0)
-
-locret_133E8:
-		rts	
-; End of function Sonic_Roll
-
-; ---------------------------------------------------------------------------
 ; Subroutine allowing Sonic to jump
 ; ---------------------------------------------------------------------------
 
@@ -24489,45 +24265,6 @@ loc_13504:
 locret_13508:
 		rts	
 ; End of function Sonic_SlopeResist
-
-; ---------------------------------------------------------------------------
-; Subroutine to	push Sonic down	a slope	while he's rolling
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-
-Sonic_RollRepel:			; XREF: Obj01_MdRoll
-		move.b	$26(a0),d0
-		addi.b	#$60,d0
-		cmpi.b	#-$40,d0
-		bcc.s	locret_13544
-		move.b	$26(a0),d0
-		jsr	(CalcSine).l
-		muls.w	#$50,d0
-		asr.l	#8,d0
-		tst.w	$14(a0)
-		bmi.s	loc_1353A
-		tst.w	d0
-		bpl.s	loc_13534
-		asr.l	#2,d0
-
-loc_13534:
-		add.w	d0,$14(a0)
-		rts	
-; ===========================================================================
-
-loc_1353A:
-		tst.w	d0
-		bmi.s	loc_13540
-		asr.l	#2,d0
-
-loc_13540:
-		add.w	d0,$14(a0)
-
-locret_13544:
-		rts	
-; End of function Sonic_RollRepel
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to	push Sonic down	a slope
@@ -24976,10 +24713,6 @@ loc_13926:
 		add.w	d1,d0
 		lea	($FFFFA400).w,a1
 		move.b	(a1,d0.w),d1	; d1 is	the 256x256 tile Sonic is currently on
-		cmp.b	($FFFFF7AE).w,d1
-		beq.w	Obj01_ChkRoll
-		cmp.b	($FFFFF7AF).w,d1
-		beq.w	Obj01_ChkRoll
 		cmp.b	($FFFFF7AC).w,d1
 		beq.s	loc_13976
 		cmp.b	($FFFFF7AD).w,d1
@@ -31944,7 +31677,7 @@ loc_18FDC:
 		clr.b	$3C(a2)
 		move.l	a0,-(sp)
 		lea	(a2),a0
-		jsr	Obj01_ChkRoll
+;		jsr	Obj01_ChkRoll
 		movea.l	(sp)+,a0
 		move.b	#2,$24(a2)
 		move.w	#$CC,d0
