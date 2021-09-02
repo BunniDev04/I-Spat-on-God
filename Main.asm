@@ -6710,72 +6710,20 @@ Deform_Index:	dc.w Deform_GHZ-Deform_Index, Deform_LZ-Deform_Index
 
 
 Deform_GHZ:				; XREF: Deform_Index
-		move.w	($FFFFF73A).w,d4
-		ext.l	d4
-		asl.l	#5,d4
-		move.l	d4,d1
-		asl.l	#1,d4
-		add.l	d1,d4
-		moveq	#0,d5
-		bsr.w	ScrollBlock1
-		bsr.w	ScrollBlock4
-		lea	($FFFFCC00).w,a1
-		move.w	($FFFFF704).w,d0
-		andi.w	#$7FF,d0
-		lsr.w	#5,d0
-		neg.w	d0
-		addi.w	#$26,d0
-		move.w	d0,($FFFFF714).w
-		move.w	d0,d4
-		bsr.w	ScrollBlock3
-		move.w	($FFFFF70C).w,($FFFFF618).w
-		move.w	#$6F,d1
-		sub.w	d4,d1
-		move.w	($FFFFF700).w,d0
-		cmpi.b	#4,($FFFFF600).w
-		bne.s	loc_633C
-		moveq	#0,d0
-
-loc_633C:
-		neg.w	d0
-		swap	d0
-		move.w	($FFFFF708).w,d0
-		neg.w	d0
-
-loc_6346:
+        lea	($FFFFCC00).w,a1        ; fucking someone else figure this out lol
+	move.w	($FFFFF700).w,d0
+	neg.w	d0
+	move.w	d0,d2
+	swap	d0
+	move.w	d2,d0
+	move.w	d0,d3
+	asr.w	#1,d0
+	move.w	#$FF,d1
+deformscreenloop:
 		move.l	d0,(a1)+
-		dbf	d1,loc_6346
-		move.w	#$27,d1
-		move.w	($FFFFF710).w,d0
-		neg.w	d0
-
-loc_6356:
-		move.l	d0,(a1)+
-		dbf	d1,loc_6356
-		move.w	($FFFFF710).w,d0
-		addi.w	#0,d0
-		move.w	($FFFFF700).w,d2
-		addi.w	#-$200,d2
-		sub.w	d0,d2
-		ext.l	d2
-		asl.l	#8,d2
-		divs.w	#$68,d2
-		ext.l	d2
-		asl.l	#8,d2
-		moveq	#0,d3
-		move.w	d0,d3
-		move.w	#$47,d1
-		add.w	d4,d1
-
-loc_6384:
-		move.w	d3,d0
-		neg.w	d0
-		move.l	d0,(a1)+
-		swap	d3
-		add.l	d2,d3
-		swap	d3
-		dbf	d1,loc_6384
-		rts	
+		dbf	d1,deformscreenloop
+                move.w	d3,d0
+		rts
 ; End of function Deform_GHZ
 
 ; ---------------------------------------------------------------------------
