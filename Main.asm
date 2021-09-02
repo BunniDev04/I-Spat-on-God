@@ -23992,8 +23992,6 @@ Sonic_ChgJumpDir:			; XREF: Obj01_MdJump; Obj01_MdJump2
 		move.w	($FFFFF760).w,d6
 		move.w	($FFFFF762).w,d5
 		asl.w	#1,d5
-		btst	#4,$22(a0)
-		bne.s	Obj01_ResetScr2
 		move.w	$10(a0),d0
 		btst	#2,($FFFFF602).w ; is left being pressed?
 		beq.s	loc_13278	; if not, branch
@@ -24056,23 +24054,6 @@ locret_132D2:
 ; End of function Sonic_ChgJumpDir
 
 ; ===========================================================================
-; ---------------------------------------------------------------------------
-; Unused subroutine to squash Sonic
-; ---------------------------------------------------------------------------
-		move.b	$26(a0),d0
-		addi.b	#$20,d0
-		andi.b	#$C0,d0
-		bne.s	locret_13302
-		bsr.w	Sonic_DontRunOnWalls
-		tst.w	d1
-		bpl.s	locret_13302
-		move.w	#0,$14(a0)	; stop Sonic moving
-		move.w	#0,$10(a0)
-		move.w	#0,$12(a0)
-		move.b	#$B,$1C(a0)	; use "warping"	animation
-
-locret_13302:
-		rts	
 ; ---------------------------------------------------------------------------
 ; Subroutine to	prevent	Sonic leaving the boundaries of	a level
 ; ---------------------------------------------------------------------------
@@ -24168,22 +24149,10 @@ loc_1341C:
 		clr.b	$38(a0)
 		move.w	#$A0,d0
 		jsr	(PlaySound_Special).l ;	play jumping sound
-		move.b	#10,$16(a0)
-		move.b	#6,$17(a0)
-		btst	#2,$22(a0)
-		bne.s	loc_13490
-		move.b	#$E,$16(a0)
-		move.b	#7,$17(a0)
 		move.b	#2,$1C(a0)	; use "jumping"	animation
 		bset	#2,$22(a0)
-		addq.w	#5,$C(a0)
 
 locret_1348E:
-		rts	
-; ===========================================================================
-
-loc_13490:
-		bset	#4,$22(a0)
 		rts	
 ; End of function Sonic_Jump
 
@@ -24849,8 +24818,6 @@ SAnim_WalkRun:				; XREF: SAnim_Do
 
 loc_13A70:
 		addi.b	#$10,d0		; add $10 to angle
-		bpl.s	loc_13A78	; if angle is $0-$7F, branch
-		moveq	#3,d1
 
 loc_13A78:
 		andi.b	#$FC,1(a0)
@@ -24883,7 +24850,6 @@ loc_13AC2:
 		lsr.w	#8,d2
 		move.b	d2,$1E(a0)	; modify frame duration
 		bsr.w	SAnim_Do2
-		add.b	d3,$1A(a0)	; modify frame number
 		rts	
 
 ; End of function Sonic_Animate
