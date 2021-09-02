@@ -56,13 +56,9 @@ PLC_GameOver:	dc.w 0
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Green Hill
 ; ---------------------------------------------------------------------------
-PLC_GHZ:	dc.w $B
-		dc.l Nem_GHZ_1st	; GHZ main patterns
-		dc.w 0
+PLC_GHZ:	dc.w 9
 		dc.l Nem_GHZ_2nd	; GHZ secondary	patterns
-		dc.w $39A0
-		dc.l Nem_Stalk		; flower stalk
-		dc.w $6B00
+		dc.w 0
 		dc.l Nem_PplRock	; purple rock
 		dc.w $7A00
 		dc.l Nem_Crabmeat	; crabmeat enemy

@@ -3215,25 +3215,9 @@ Title_LoadText:
 		move.w	#0,($FFFFFFEA).w
 		move.w	#0,($FFFFFE10).w ; set level to	GHZ (00)
 		move.w	#0,($FFFFF634).w ; disable pallet cycling
-		bsr.w	LevelSizeLoad
-		bsr.w	DeformBgLayer
-		lea	($FFFFB000).w,a1
-		lea	(Blk16_GHZ).l,a0 ; load	GHZ 16x16 mappings
-		move.w	#0,d0
-		bsr.w	EniDec
-		lea	(Blk256_GHZ).l,a0 ; load GHZ 256x256 mappings
-		lea	($FF0000).l,a1
-		bsr.w	KosDec
-		bsr.w	LevelLayoutLoad
 		bsr.w	Pal_FadeFrom
 		move	#$2700,sr
 		bsr.w	ClearScreen
-		lea	($C00004).l,a5
-		lea	($C00000).l,a6
-		lea	($FFFFF708).w,a3
-		lea	($FFFFA440).w,a4
-		move.w	#$6000,d2
-		bsr.w	LoadTilesFromStart2
 		lea	($FF0000).l,a1
 		lea	(Eni_Title).l,a0 ; load	title screen mappings
 		move.w	#0,d0
@@ -3243,9 +3227,6 @@ Title_LoadText:
 		moveq	#$21,d1
 		moveq	#$15,d2
 		bsr.w	ShowVDPGraphics
-		move.l	#$40000000,($C00004).l
-		lea	(Nem_GHZ_1st).l,a0 ; load GHZ patterns
-		bsr.w	NemDec
 		moveq	#1,d0		; load title screen pallet
 		bsr.w	PalLoad1
 		move.b	#$8A,d0		; play title screen music
@@ -35816,76 +35797,11 @@ AniArt_Pause:
 ; End of function AniArt_Load
 
 ; ===========================================================================
-AniArt_Index:	dc.w AniArt_GHZ-AniArt_Index, AniArt_none-AniArt_Index
+AniArt_Index:	dc.w AniArt_none-AniArt_Index, AniArt_none-AniArt_Index
 		dc.w AniArt_MZ-AniArt_Index, AniArt_none-AniArt_Index
 		dc.w AniArt_none-AniArt_Index, AniArt_SBZ-AniArt_Index
 		dc.w AniArt_Ending-AniArt_Index
 ; ===========================================================================
-; ---------------------------------------------------------------------------
-; Animated pattern routine - Green Hill
-; ---------------------------------------------------------------------------
-
-AniArt_GHZ:				; XREF: AniArt_Index
-		subq.b	#1,($FFFFF7B1).w
-		bpl.s	loc_1C08A
-		move.b	#5,($FFFFF7B1).w ; time	to display each	frame for
-		lea	(Art_GhzWater).l,a1 ; load waterfall patterns
-		move.b	($FFFFF7B0).w,d0
-		addq.b	#1,($FFFFF7B0).w
-		andi.w	#1,d0
-		beq.s	loc_1C078
-		lea	$100(a1),a1	; load next frame
-
-loc_1C078:
-		move.l	#$6F000001,($C00004).l ; VRAM address
-		move.w	#7,d1		; number of 8x8	tiles
-		bra.w	LoadTiles
-; ===========================================================================
-
-loc_1C08A:
-		subq.b	#1,($FFFFF7B3).w
-		bpl.s	loc_1C0C0
-		move.b	#$F,($FFFFF7B3).w
-		lea	(Art_GhzFlower1).l,a1 ;	load big flower	patterns
-		move.b	($FFFFF7B2).w,d0
-		addq.b	#1,($FFFFF7B2).w
-		andi.w	#1,d0
-		beq.s	loc_1C0AE
-		lea	$200(a1),a1
-
-loc_1C0AE:
-		move.l	#$6B800001,($C00004).l
-		move.w	#$F,d1
-		bra.w	LoadTiles
-; ===========================================================================
-
-loc_1C0C0:
-		subq.b	#1,($FFFFF7B5).w
-		bpl.s	locret_1C10C
-		move.b	#7,($FFFFF7B5).w
-		move.b	($FFFFF7B4).w,d0
-		addq.b	#1,($FFFFF7B4).w
-		andi.w	#3,d0
-		move.b	byte_1C10E(pc,d0.w),d0
-		btst	#0,d0
-		bne.s	loc_1C0E8
-		move.b	#$7F,($FFFFF7B5).w
-
-loc_1C0E8:
-		lsl.w	#7,d0
-		move.w	d0,d1
-		add.w	d0,d0
-		add.w	d1,d0
-		move.l	#$6D800001,($C00004).l
-		lea	(Art_GhzFlower2).l,a1 ;	load small flower patterns
-		lea	(a1,d0.w),a1
-		move.w	#$B,d1
-		bsr.w	LoadTiles
-
-locret_1C10C:
-		rts	
-; ===========================================================================
-byte_1C10E:	dc.b 0,	1, 2, 1
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Animated pattern routine - Marble
