@@ -1,8 +1,28 @@
 {
     "Flex": 2,
     "name": "",
-    "node": "39487ae3-1c0f-4fdf-a567-de0d21b4cd3a",
+    "node": "885ee2de-2b2f-415e-936d-cb858fb6724e",
     "objects": [
+        {
+            "uuid": "885ee2de-2b2f-415e-936d-cb858fb6724e",
+            "format": "Sonic 1.js",
+            "name": "Power Ups",
+            "palettes": [],
+            "art": {
+                "path": "Objects/PowerUps/tiles.nem",
+                "compression": "Nemesis",
+                "offset": 0
+            },
+            "mappings": {
+                "path": "Objects/PowerUps/mappings.asm",
+                "label": ""
+            },
+            "dplcs": {
+                "enabled": false,
+                "path": "",
+                "label": ""
+            }
+        },
         {
             "uuid": "0d21b4cd-3a12-41f0-a8cd-6e858890e58f",
             "format": "Sonic 1.js",

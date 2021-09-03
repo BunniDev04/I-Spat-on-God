@@ -23447,7 +23447,7 @@ Obj01_Main:				; XREF: Obj01_Index
 		move.b	#2,$18(a0)
 		move.b	#$18,$19(a0)
 		move.b	#4,1(a0)
-		move.w	#$600,($FFFFF760).w ; Sonic's top speed
+		move.w	#$200,($FFFFF760).w ; Sonic's top speed
 		move.w	#$C,($FFFFF762).w ; Sonic's acceleration
 		move.w	#$80,($FFFFF764).w ; Sonic's deceleration
 
@@ -23551,7 +23551,7 @@ Obj01_ChkShoes:
 		beq.s	Obj01_ExitChk
 		subq.w	#1,$34(a0)	; subtract 1 from time
 		bne.s	Obj01_ExitChk
-		move.w	#$600,($FFFFF760).w ; restore Sonic's speed
+		move.w	#$200,($FFFFF760).w ; restore Sonic's speed
 		move.w	#$C,($FFFFF762).w ; restore Sonic's acceleration
 		move.w	#$80,($FFFFF764).w ; restore Sonic's deceleration
 		move.b	#0,($FFFFFE2E).w ; cancel speed	shoes
@@ -23619,7 +23619,7 @@ Obj01_OutWater:
 		bclr	#6,$22(a0)
 		beq.s	locret_12D80
 		bsr.w	ResumeMusic
-		move.w	#$600,($FFFFF760).w ; restore Sonic's speed
+		move.w	#$200,($FFFFF760).w ; restore Sonic's speed
 		move.w	#$C,($FFFFF762).w ; restore Sonic's acceleration
 		move.w	#$80,($FFFFF764).w ; restore Sonic's deceleration
 		asl	$12(a0)
@@ -24856,6 +24856,9 @@ SPLC_LoadTile:
 locret_13C96:
 		rts	
 ; End of function LoadSonicDynPLC
+
+
+		include	"Objects/PowerUps/code.asm"
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
