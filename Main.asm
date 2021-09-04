@@ -6610,7 +6610,7 @@ BgScroll_Index:	dc.w BgScroll_GHZ-BgScroll_Index, BgScroll_LZ-BgScroll_Index
 ; ===========================================================================
 
 BgScroll_GHZ:				; XREF: BgScroll_Index
-		sub.w    #48, ($FFFFF70C)
+		sub.w    #546, ($FFFFF70C)
 		bra.w	Deform_GHZ
 ; ===========================================================================
 

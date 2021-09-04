@@ -53,10 +53,10 @@ ObjPowerUp_Fire:
         tst.b   $30(a0) ; Timer code doesn't work, plz fix
         bne.s   @Display
         bchg    #0,1(a0)
-        move.b  #60,$30(a0)
+        move.b  #15,$30(a0)
 
     @Display:
-        subq    #1,$30(a0)
+        subi.b    #1,$30(a0)
         jsr DisplaySprite
         rts
 
