@@ -2052,32 +2052,10 @@ PalCycle:	dc.w PalCycle_GHZ-PalCycle
 		dc.w PalCycle_SYZ-PalCycle
 		dc.w PalCycle_SBZ-PalCycle
 		dc.w PalCycle_GHZ-PalCycle
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-
-PalCycle_Title:				; XREF: TitleScreen
-		lea	(Pal_TitleCyc).l,a0
-		bra.s	loc_196A
 ; ===========================================================================
 
 PalCycle_GHZ:				; XREF: PalCycle
-		lea	(Pal_GHZCyc).l,a0
-
-loc_196A:				; XREF: PalCycle_Title
-		subq.w	#1,($FFFFF634).w
-		bpl.s	locret_1990
-		move.w	#5,($FFFFF634).w
-		move.w	($FFFFF632).w,d0
-		addq.w	#1,($FFFFF632).w
-		andi.w	#3,d0
-		lsl.w	#3,d0
-		lea	($FFFFFB50).w,a1
-		move.l	(a0,d0.w),(a1)+
-		move.l	4(a0,d0.w),(a1)
-
-locret_1990:
-		rts	
+		rts
 ; End of function PalCycle_Title
 
 
@@ -3265,7 +3243,6 @@ loc_317C:
 		jsr	ObjectsLoad
 		bsr.w	DeformBgLayer
 		jsr	BuildSprites
-		bsr.w	PalCycle_Title
 		bsr.w	RunPLC_RAM
 		move.w	($FFFFD008).w,d0
 		addq.w	#2,d0
@@ -6472,8 +6449,43 @@ LevelSizeLoad:				; XREF: TitleScreen; Level; EndingSequence
 ; ---------------------------------------------------------------------------
 ; Level size array and ending start location array
 ; ---------------------------------------------------------------------------
-LevelSizeArray:	incbin	misc\lvl_size.bin
-		even
+LevelSizeArray:
+        ; GHZ
+        dc.w $0004, $0000, $24BF, $0000, $0120, $0060 ; Act 1
+        dc.w $0004, $0000, $1EBF, $0000, $0300, $0060 ; Act 2
+        dc.w $0004, $0000, $2960, $0000, $0300, $0060 ; Act 3
+        dc.w $0004, $0000, $2ABF, $0000, $0300, $0060 ; Act 4 (Unused)
+        ; LZ
+        dc.w $0004, $0000, $19BF, $0000, $0530, $0060 ; Act 1
+        dc.w $0004, $0000, $10AF, $0000, $0720, $0060 ; Act 2
+        dc.w $0004, $0000, $202F, $FF00, $0800, $0060 ; Act 3
+        dc.w $0004, $0000, $20BF, $0000, $0720, $0060 ; Act 4 (Scrap Brain Act 3)
+        ; MZ
+        dc.w $0004, $0000, $17BF, $0000, $01D0, $0060 ; Act 1
+        dc.w $0004, $0000, $17BF, $0000, $0520, $0060 ; Act 2
+        dc.w $0004, $0000, $1800, $0000, $0720, $0060 ; Act 3
+        dc.w $0004, $0000, $16BF, $0000, $0720, $0060 ; Act 4 (Unused)
+        ; SLZ
+        dc.w $0004, $0000, $1FBF, $0000, $0640, $0060 ; Act 1
+        dc.w $0004, $0000, $1FBF, $0000, $0640, $0060 ; Act 2
+        dc.w $0004, $0000, $2000, $0000, $06C0, $0060 ; Act 3
+        dc.w $0004, $0000, $3EC0, $0000, $0720, $0060 ; Act 4 (Unused)
+        ; SYZ
+        dc.w $0004, $0000, $22C0, $0000, $0420, $0060 ; Act 1
+        dc.w $0004, $0000, $28C0, $0000, $0520, $0060 ; Act 2
+        dc.w $0004, $0000, $2C00, $0000, $0620, $0060 ; Act 3
+        dc.w $0004, $0000, $2EC0, $0000, $0620, $0060 ; Act 4 (Unused)
+        ; SBZ
+        dc.w $0004, $0000, $21C0, $0000, $0720, $0060 ; Act 1
+        dc.w $0004, $0000, $1E40, $FF00, $0800, $0060 ; Act 2
+        dc.w $0004, $2080, $2460, $0510, $0510, $0060 ; Act 3 (Final Zone)
+        dc.w $0004, $0000, $3EC0, $0000, $0720, $0060 ; Act 4 (Unused)
+        ; Ending
+        dc.w $0004, $0000, $0500, $0110, $0110, $0060 ; Act 1 (Good Ending)
+        dc.w $0004, $0000, $0DC0, $0110, $0110, $0060 ; Act 2 (Bad Ending)
+        dc.w $0004, $0000, $2FFF, $0000, $0320, $0060 ; Act 3 (Unused)
+        dc.w $0004, $0000, $2FFF, $0000, $0320, $0060 ; Act 4 (Unused)
+        even
 
 EndingStLocArray:
 		incbin	misc\sloc_end.bin
@@ -8052,14 +8064,7 @@ Resize_GHZx:	dc.w Resize_GHZ1-Resize_GHZx
 ; ===========================================================================
 
 Resize_GHZ1:
-		move.w	#$300,($FFFFF726).w ; set lower	y-boundary
-		cmpi.w	#$1780,($FFFFF700).w ; has the camera reached $1780 on x-axis?
-		bcs.s	locret_6E08	; if not, branch
-		move.w	#$400,($FFFFF726).w ; set lower	y-boundary
-
-locret_6E08:
-		rts	
-; ===========================================================================
+		rts
 
 Resize_GHZ2:
 		move.w	#$300,($FFFFF726).w
@@ -23441,7 +23446,7 @@ Obj01_Index:	dc.w Obj01_Main-Obj01_Index
 
 Obj01_Main:				; XREF: Obj01_Index
 		addq.b	#2,$24(a0)
-		move.b	#10,$16(a0)
+		move.b	#12,$16(a0)
 		move.b	#6,$17(a0)
 		move.l	#Map_Sonic,4(a0)
 		move.w	#$780,2(a0)
@@ -24485,8 +24490,6 @@ loc_137AE:
 		btst	#2,$22(a0)
 		beq.s	loc_137E4
 		bclr	#2,$22(a0)
-		move.b	#10,$16(a0)
-		move.b	#6,$17(a0)
 		move.b	#0,$1C(a0)	; use running/walking animation
 		subq.w	#5,$C(a0)
 
