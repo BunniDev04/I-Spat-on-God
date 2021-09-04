@@ -56,40 +56,12 @@ PLC_GameOver:	dc.w 0
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Green Hill
 ; ---------------------------------------------------------------------------
-PLC_GHZ:	dc.w 9
+PLC_GHZ:	dc.w 0
 		dc.l Nem_GHZ_2nd	; GHZ secondary	patterns
 		dc.w 0
-		dc.l Nem_PplRock	; purple rock
-		dc.w $7A00
-		dc.l Nem_Crabmeat	; crabmeat enemy
-		dc.w $8000
-		dc.l Nem_Buzz		; buzz bomber enemy
-		dc.w $8880
-		dc.l Nem_Chopper	; chopper enemy
-		dc.w $8F60
-		dc.l Nem_Newtron	; newtron enemy
-		dc.w $9360
-		dc.l Nem_Motobug	; motobug enemy
-		dc.w $9E00
-		dc.l Nem_Spikes		; spikes
-		dc.w $A360
-		dc.l Nem_HSpring	; horizontal spring
-		dc.w $A460
-		dc.l Nem_VSpring	; vertical spring
-		dc.w $A660
-PLC_GHZ2:	dc.w 5
+PLC_GHZ2:	dc.w 0
 		dc.l Nem_Swing		; swinging platform
 		dc.w $7000
-		dc.l Nem_Bridge		; bridge
-		dc.w $71C0
-		dc.l Nem_SpikePole	; spiked pole
-		dc.w $7300
-		dc.l Nem_Ball		; giant	ball
-		dc.w $7540
-		dc.l Nem_GhzWall1	; breakable wall
-		dc.w $A1E0
-		dc.l Nem_GhzWall2	; normal wall
-		dc.w $6980
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Labyrinth
 ; ---------------------------------------------------------------------------

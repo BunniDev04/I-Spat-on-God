@@ -6451,7 +6451,7 @@ LevelSizeLoad:				; XREF: TitleScreen; Level; EndingSequence
 ; ---------------------------------------------------------------------------
 LevelSizeArray:
         ; GHZ
-        dc.w $0004, $0000, $24BF, $0000, $0120, $0060 ; Act 1
+        dc.w $0004, $0000, $1308, $0000, $0120, $0060 ; Act 1
         dc.w $0004, $0000, $1EBF, $0000, $0300, $0060 ; Act 2
         dc.w $0004, $0000, $2960, $0000, $0300, $0060 ; Act 3
         dc.w $0004, $0000, $2ABF, $0000, $0300, $0060 ; Act 4 (Unused)
@@ -6622,7 +6622,13 @@ BgScroll_Index:	dc.w BgScroll_GHZ-BgScroll_Index, BgScroll_LZ-BgScroll_Index
 ; ===========================================================================
 
 BgScroll_GHZ:				; XREF: BgScroll_Index
-		sub.w    #546, ($FFFFF70C)
+		move.w	($FFFFF704).w,($FFFFF70C).w	; Set the BG's Y position to the FG's Y pos
+		sub.w	#$30,($FFFFF70C).w	; Subtract 32 pixels from it (Because there's a blank section on the bottom part of the chunk)
+		cmp.w	#$DF,($FFFFF70C).w	; Check if it's higher than this point
+		bgt.s	@skip	; If it's lower then it's fine
+		move.w	#$DF,($FFFFF70C).w	; Set it to that height
+
+	@skip:
 		bra.w	Deform_GHZ
 ; ===========================================================================
 
