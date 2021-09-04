@@ -3848,11 +3848,20 @@ Level_ChkWater:
 		move.w	#0,($FFFFF602).w
 		move.w	#0,($FFFFF604).w
 		cmpi.b	#1,($FFFFFE10).w ; is level LZ?
-		bne.s	Level_LoadObj	; if not, branch
+		bne.s	Level_ChkSH	; if not, branch
 		move.b	#$1B,($FFFFD780).w ; load water	surface	object
 		move.w	#$60,($FFFFD788).w
 		move.b	#$1B,($FFFFD7C0).w
 		move.w	#$120,($FFFFD7C8).w
+
+Level_ChkSH:
+		cmp.b	#2,($FFFFFE10).w
+		bne.s	Level_DisableSH
+		move.w #$8C00|%00001000,($C00004).l ; Enable S/H
+		bra.s	Level_LoadObj
+
+Level_DisableSH:
+		move.w #$8C00,($C00004).l ; Disable S/H
 
 Level_LoadObj:
 		jsr	ObjPosLoad
@@ -24869,6 +24878,7 @@ locret_13C96:
 
 
 		include	"Objects/PowerUps/code.asm"
+		include	"Objects/Hazards/Green Bubble/code.asm"
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------

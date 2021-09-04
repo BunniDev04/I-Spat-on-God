@@ -120,38 +120,15 @@ PLC_LZ2:	dc.w $C
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Marble
 ; ---------------------------------------------------------------------------
-PLC_MZ:		dc.w 9
+PLC_MZ:		dc.w 1
 		dc.l Nem_MZ		; MZ main patterns
 		dc.w 0
-		dc.l Nem_MzMetal	; metal	blocks
+		dc.l Nem_GreenBubble	; metal	blocks
 		dc.w $6000
-		dc.l Nem_MzFire		; fireballs
-		dc.w $68A0
-		dc.l Nem_Swing		; swinging platform
-		dc.w $7000
-		dc.l Nem_MzGlass	; green	glassy block
-		dc.w $71C0
-		dc.l Nem_Lava		; lava
-		dc.w $7500
-		dc.l Nem_Buzz		; buzz bomber enemy
-		dc.w $8880
-		dc.l Nem_Yadrin		; yadrin enemy
-		dc.w $8F60
-		dc.l Nem_Basaran	; basaran enemy
-		dc.w $9700
-		dc.l Nem_Cater		; caterkiller enemy
-		dc.w $9FE0
-PLC_MZ2:	dc.w 4
+
+PLC_MZ2:	dc.w 0
 		dc.l Nem_MzSwitch	; switch
 		dc.w $A260
-		dc.l Nem_Spikes		; spikes
-		dc.w $A360
-		dc.l Nem_HSpring	; horizontal spring
-		dc.w $A460
-		dc.l Nem_VSpring	; vertical spring
-		dc.w $A660
-		dc.l Nem_MzBlock	; green	stone block
-		dc.w $5700
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - Star Light
 ; ---------------------------------------------------------------------------

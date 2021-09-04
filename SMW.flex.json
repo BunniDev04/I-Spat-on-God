@@ -1,8 +1,118 @@
 {
     "Flex": 2,
     "name": "",
-    "node": "885ee2de-2b2f-415e-936d-cb858fb6724e",
+    "node": "6ec010c9-e6c4-44da-b012-cf1ca8974110",
     "objects": [
+        {
+            "uuid": "6ec010c9-e6c4-44da-b012-cf1ca8974110",
+            "format": "Sonic 1.js",
+            "name": "Green Bubble",
+            "palettes": [
+                {
+                    "path": "pallet/sonic.bin",
+                    "length": 1
+                }
+            ],
+            "art": {
+                "path": "Objects/Hazards/Green Bubble/tiles.nem",
+                "compression": "Nemesis",
+                "offset": 0
+            },
+            "mappings": {
+                "path": "Objects/Hazards/Green Bubble/mappings.asm",
+                "label": ""
+            },
+            "dplcs": {
+                "enabled": false,
+                "path": "",
+                "label": ""
+            }
+        },
+        {
+            "uuid": "23981493-dc69-4901-a5b3-0d504ab14875",
+            "format": "Sonic 1.js",
+            "name": "Banzai Bill",
+            "palettes": [],
+            "art": {
+                "path": "Objects/Enemies/Banzai Bill/tiles.nem",
+                "compression": "Nemesis",
+                "offset": 0
+            },
+            "mappings": {
+                "path": "Objects/Enemies/Banzai Bill/mappings.asm",
+                "label": ""
+            },
+            "dplcs": {
+                "enabled": false,
+                "path": "",
+                "label": ""
+            }
+        },
+        {
+            "uuid": "31bf17fa-757d-4398-9493-dc69190165b3",
+            "format": "Sonic 1.js",
+            "name": "Koopa",
+            "palettes": [],
+            "art": {
+                "path": "Objects/Enemies/Koopa/tiles.nem",
+                "compression": "Nemesis",
+                "offset": 0
+            },
+            "mappings": {
+                "path": "Objects/Enemies/Koopa/mappings.asm",
+                "label": ""
+            },
+            "dplcs": {
+                "enabled": false,
+                "path": "",
+                "label": ""
+            }
+        },
+        {
+            "uuid": "85a358ad-b9b0-4be5-ab5c-64276d173dfd",
+            "format": "Sonic 1.js",
+            "name": "Blargg",
+            "palettes": [],
+            "art": {
+                "path": "Objects/Enemies/Blargg/tiles.nem",
+                "compression": "Nemesis",
+                "offset": 0
+            },
+            "mappings": {
+                "path": "Objects/Enemies/Blargg/mappings.asm",
+                "label": ""
+            },
+            "dplcs": {
+                "enabled": false,
+                "path": "",
+                "label": ""
+            }
+        },
+        {
+            "uuid": "996f4f5b-d1b8-4a5c-904b-e03fca7e2ef2",
+            "format": "Sonic 1.js",
+            "name": "Rex",
+            "palettes": [
+                {
+                    "path": "pallet/ghz.bin",
+                    "length": 3
+                }
+            ],
+            "art": {
+                "path": "Objects/Enemies/Rex/tiles.nem",
+                "compression": "Nemesis",
+                "offset": 0
+            },
+            "mappings": {
+                "path": "Objects/Enemies/Rex/mappings.asm",
+                "label": ""
+            },
+            "dplcs": {
+                "enabled": false,
+                "path": "",
+                "label": ""
+            }
+        },
         {
             "uuid": "885ee2de-2b2f-415e-936d-cb858fb6724e",
             "format": "Sonic 1.js",

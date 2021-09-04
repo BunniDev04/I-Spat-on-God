@@ -6,9 +6,9 @@
 
 ObjPowerUp:
         moveq   #0,d0
-		move.b	$24(a0),d0
-		move.w  ObjPowerUp_Index(pc,d0.w),d1
-		jmp ObjPowerUp_Index(pc,d1.w)
+	move.b	$24(a0),d0
+	move.w  ObjPowerUp_Index(pc,d0.w),d1
+	jmp ObjPowerUp_Index(pc,d1.w)
 ; --------------------------------------------------
 ; Power Up Object Routine Index
 ; --------------------------------------------------
@@ -27,7 +27,7 @@ ObjPowerUp_Init:
         add.b   #2,d0
         move.b  d0,$24(a0)  ; Determines what object code to run
         move.b  #4,1(a0)
-		move.w	#$680,2(a0)
+	move.w	#$680,2(a0)
         move.l	#Map_PowerUps,4(a0)
         move.b  #7,$16(a0)
         move.b  #7,$17(a0)
@@ -56,7 +56,7 @@ ObjPowerUp_Fire:
         move.b  #15,$30(a0)
 
     @Display:
-        subi.b    #1,$30(a0)
+        subq.b    #1,$30(a0)
         jsr DisplaySprite
         rts
 
