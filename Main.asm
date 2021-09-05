@@ -3058,28 +3058,19 @@ SegaScreen:				; XREF: GameModeArray
 		move.w	d0,($C00004).l
 		bsr.w	ClearScreen
 		move.l	#$40000000,($C00004).l
-		lea	(Nem_SegaLogo).l,a0 ; load Sega	logo patterns
+		lea	(Nem_Martyr).l,a0 ; load Sega	logo patterns
 		bsr.w	NemDec
 		lea	($FF0000).l,a1
-		lea	(Eni_SegaLogo).l,a0 ; load Sega	logo mappings
+		lea	(Map_Martyr).l,a0 ; load Sega	logo mappings
 		move.w	#0,d0
 		bsr.w	EniDec
 		lea	($FF0000).l,a1
-		move.l	#$65100003,d0
-		moveq	#$17,d1
-		moveq	#7,d2
-		bsr.w	ShowVDPGraphics
-		lea	($FF0180).l,a1
-		move.l	#$40000003,d0
-		moveq	#$27,d1
+		move.l	#$60000003,d0
+		moveq	#31,d1
 		moveq	#$1B,d2
 		bsr.w	ShowVDPGraphics
 		moveq	#0,d0
-		bsr.w	PalLoad2	; load Sega logo pallet
-		move.w	#-$A,($FFFFF632).w
-		move.w	#0,($FFFFF634).w
-		move.w	#0,($FFFFF662).w
-		move.w	#0,($FFFFF660).w
+		bsr.w	PalLoad2	; load continue	screen pallet
 		move.w	($FFFFF60C).w,d0
 		ori.b	#$40,d0
 		move.w	d0,($C00004).l
@@ -3087,8 +3078,6 @@ SegaScreen:				; XREF: GameModeArray
 Sega_WaitPallet:
 		move.b	#2,($FFFFF62A).w
 		bsr.w	DelayProgram
-		bsr.w	PalCycle_Sega
-		bne.s	Sega_WaitPallet
 
 		move.b	#$14,($FFFFF62A).w
 		bsr.w	DelayProgram
@@ -3106,6 +3095,16 @@ Sega_GotoTitle:
 		move.b	#4,($FFFFF600).w ; go to title screen
 		rts	
 ; ===========================================================================
+
+Nem_Martyr:
+		incbin	"MartyrSplash/tiles.nem"
+
+Map_Martyr:
+		incbin	"MartyrSplash/map.eni"
+
+Pal_Martyr:
+		incbin	"MartyrSplash/palette.pal"
+		even
 
 ; ---------------------------------------------------------------------------
 ; Title	screen
@@ -6458,7 +6457,7 @@ LevelSizeLoad:				; XREF: TitleScreen; Level; EndingSequence
 ; ---------------------------------------------------------------------------
 LevelSizeArray:
         ; GHZ
-        dc.w $0004, $0000, $1308, $0000, $0120, $0060 ; Act 1
+        dc.w $0004, $0000, $1300, $0000, $0120, $0060 ; Act 1
         dc.w $0004, $0000, $1EBF, $0000, $0300, $0060 ; Act 2
         dc.w $0004, $0000, $2960, $0000, $0300, $0060 ; Act 3
         dc.w $0004, $0000, $2ABF, $0000, $0300, $0060 ; Act 4 (Unused)
@@ -6629,13 +6628,6 @@ BgScroll_Index:	dc.w BgScroll_GHZ-BgScroll_Index, BgScroll_LZ-BgScroll_Index
 ; ===========================================================================
 
 BgScroll_GHZ:				; XREF: BgScroll_Index
-		move.w	($FFFFF704).w,($FFFFF70C).w	; Set the BG's Y position to the FG's Y pos
-		sub.w	#$30,($FFFFF70C).w	; Subtract 32 pixels from it (Because there's a blank section on the bottom part of the chunk)
-		cmp.w	#$DF,($FFFFF70C).w	; Check if it's higher than this point
-		bgt.s	@skip	; If it's lower then it's fine
-		move.w	#$DF,($FFFFF70C).w	; Set it to that height
-
-	@skip:
 		bra.w	Deform_GHZ
 ; ===========================================================================
 
@@ -6749,6 +6741,10 @@ deformscreenloop:
 		move.l	d0,(a1)+
 		dbf	d1,deformscreenloop
                 move.w	d3,d0
+		move.w	($FFFFF704).w,($FFFFF70C).w	; Set the BG's Y position to the FG's Y pos
+		sub.w	#$30,($FFFFF70C).w	; Subtract 32 pixels from it (Because there's a blank section on the bottom part of the chunk)
+
+	@skip:
 		rts
 ; End of function Deform_GHZ
 
@@ -24093,8 +24089,14 @@ Boundary_Sides:
 
 Sonic_Jump:				; XREF: Obj01_MdNormal; Obj01_MdRoll
 		move.b	($FFFFF603).w,d0
-		andi.b	#$70,d0		; is A,	B or C pressed?
-		beq.w	locret_1348E	; if not, branch
+		andi.b	#$20,d0		; is A,	B or C pressed?
+		bne.s	@pass	; if not, branch
+		move.b	($FFFFF603).w,d0
+		andi.b	#$40,d0		; is A,	B or C pressed?		
+		beq.w	locret_1348E
+		move.b	#1,($FFFFF662).w
+
+@pass:
 		moveq	#0,d0
 		move.b	$26(a0),d0
 		addi.b	#$80,d0
@@ -24124,6 +24126,13 @@ loc_1341C:
 		clr.b	$38(a0)
 		move.w	#$A0,d0
 		jsr	(PlaySound_Special).l ;	play jumping sound
+		tst.b	($FFFFF662).w
+		beq.s	@regularjump
+		move.b	#6,$1C(a0)
+		bset	#2,$22(a0)
+		rts
+
+@regularjump
 		move.b	#2,$1C(a0)	; use "jumping"	animation
 		bset	#2,$22(a0)
 
@@ -24165,6 +24174,8 @@ locret_134D2:
 ; End of function Sonic_JumpHeight
 
 Mario_Fall:
+		tst.b	($FFFFF662).w
+		bne.s	@return
 		btst	#1,$22(a0)	; Check if Mario is midair
 		beq.s	@return
 		btst	#3,$22(a0)	; But if he's in the air and not supposed to fall
@@ -24493,16 +24504,9 @@ locret_1379E:
 
 
 Sonic_ResetOnFloor:			; XREF: PlatformObject; et al
-		btst	#4,$22(a0)
-		beq.s	loc_137AE
-		nop	
-		nop	
-		nop	
-
-loc_137AE:
+		clr.b	($FFFFF662).w
 		bclr	#5,$22(a0)
 		bclr	#1,$22(a0)
-		bclr	#4,$22(a0)
 		btst	#2,$22(a0)
 		beq.s	loc_137E4
 		bclr	#2,$22(a0)

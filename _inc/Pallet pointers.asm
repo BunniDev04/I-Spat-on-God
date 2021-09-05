@@ -1,9 +1,9 @@
 ; ---------------------------------------------------------------------------
 ; Pallet pointers
 ; ---------------------------------------------------------------------------
-	dc.l Pal_SegaBG		; pallet address
+	dc.l Pal_Martyr		; pallet address
 	dc.w $FB00		; RAM address
-	dc.w $1F		; (pallet length / 2) - 1
+	dc.w 7		; (pallet length / 2) - 1
 	dc.l Pal_Title
 	dc.w $FB00
 	dc.w $1F

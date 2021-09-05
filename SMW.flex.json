@@ -1,18 +1,13 @@
 {
     "Flex": 2,
     "name": "",
-    "node": "6ec010c9-e6c4-44da-b012-cf1ca8974110",
+    "node": "39487ae3-1c0f-4fdf-a567-de0d21b4cd3a",
     "objects": [
         {
             "uuid": "6ec010c9-e6c4-44da-b012-cf1ca8974110",
             "format": "Sonic 1.js",
             "name": "Green Bubble",
-            "palettes": [
-                {
-                    "path": "pallet/sonic.bin",
-                    "length": 1
-                }
-            ],
+            "palettes": [],
             "art": {
                 "path": "Objects/Hazards/Green Bubble/tiles.nem",
                 "compression": "Nemesis",

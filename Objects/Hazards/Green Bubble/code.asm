@@ -43,9 +43,9 @@ Ani_GreenBubble:
         dc.w    GrBubAni2-Ani_GreenBubble
 
 GrBubAni0:
-        dc.b    0, 0, 1, 0, 1, $FD, 1
+        dc.b    1, 0, 1, 0, 1, $FD, 1
 GrBubAni1:
-        dc.b    0, 2, 3, 2, 3, $FD, 2
+        dc.b    1, 2, 3, 2, 3, $FD, 2
 GrBubAni2:
-        dc.b    0, 4, 5, 4, 5, $FD, 0
+        dc.b    1, 4, 5, 4, 5, $FD, 0
         even
