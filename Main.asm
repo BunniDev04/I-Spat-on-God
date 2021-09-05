@@ -3090,8 +3090,6 @@ Sega_WaitPallet:
 		bsr.w	PalCycle_Sega
 		bne.s	Sega_WaitPallet
 
-		move.b	#$E1,d0
-		bsr.w	PlaySound_Special ; play "SEGA"	sound
 		move.b	#$14,($FFFFF62A).w
 		bsr.w	DelayProgram
 		move.w	#$1E,($FFFFF614).w
@@ -14941,6 +14939,7 @@ loc_C3C8:
 		bmi.s	locret_C3D8
 		cmpi.w	#$200,d0	; has item moved beyond	$200 on	x-axis?
 		bcc.s	locret_C3D8	; if yes, branch
+		rts
 		bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -14952,6 +14951,7 @@ Obj34_Wait:				; XREF: Obj34_Index
 		tst.w	$1E(a0)		; is time remaining zero?
 		beq.s	Obj34_ChkPos2	; if yes, branch
 		subq.w	#1,$1E(a0)	; subtract 1 from time
+		rts
 		bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -14971,6 +14971,7 @@ Obj34_Move2:
 		bmi.s	locret_C412
 		cmpi.w	#$200,d0	; has item moved beyond	$200 on	x-axis?
 		bcc.s	locret_C412	; if yes, branch
+		rts
 		bra.w	DisplaySprite
 ; ===========================================================================
 
