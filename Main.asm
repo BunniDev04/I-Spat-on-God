@@ -3076,15 +3076,10 @@ SegaScreen:				; XREF: GameModeArray
 		move.w	d0,($C00004).l
 
 Sega_WaitPallet:
-		move.b	#2,($FFFFF62A).w
-		bsr.w	DelayProgram
-
-		move.b	#$14,($FFFFF62A).w
-		bsr.w	DelayProgram
 		move.w	#180,($FFFFF614).w
 
 Sega_WaitEnd:
-		move.b	#2,($FFFFF62A).w
+		move.b	#4,($FFFFF62A).w
 		bsr.w	DelayProgram
 MartyrBGDeform:
         lea ($FFFFCC00),a1
@@ -3106,7 +3101,6 @@ MartyrBGDeform:
         sub.w   d0,(a1)
         add.w   #2,a1
         dbf d2,@loop
-
         addi.w  #1,($FFFFF5C0).w
 		tst.w	($FFFFF614).w
 		beq.s	Sega_GotoTitle
@@ -3156,22 +3150,10 @@ TitleScreen:				; XREF: GameModeArray
 Title_ClrObjRam:
 		move.l	d0,(a1)+
 		dbf	d1,Title_ClrObjRam ; fill object RAM ($D000-$EFFF) with	$0
-
-		move.l	#$40000000,($C00004).l
-		lea	(Nem_JapNames).l,a0 ; load Japanese credits
-		bsr.w	NemDec
 		move.l	#$54C00000,($C00004).l
 		lea	(Nem_CreditText).l,a0 ;	load alphabet
 		bsr.w	NemDec
 		lea	($FF0000).l,a1
-		lea	(Eni_JapNames).l,a0 ; load mappings for	Japanese credits
-		move.w	#0,d0
-		bsr.w	EniDec
-		lea	($FF0000).l,a1
-		move.l	#$40000003,d0
-		moveq	#$27,d1
-		moveq	#$1B,d2
-		bsr.w	ShowVDPGraphics
 		lea	($FFFFFB80).w,a1
 		moveq	#0,d0
 		move.w	#$1F,d1
@@ -23480,14 +23462,14 @@ Obj01_Index:	dc.w Obj01_Main-Obj01_Index
 
 Obj01_Main:				; XREF: Obj01_Index
 		addq.b	#2,$24(a0)
-		move.b	#12,$16(a0)
+		move.b	#11,$16(a0)
 		move.b	#6,$17(a0)
 		move.l	#Map_Sonic,4(a0)
 		move.w	#$780,2(a0)
 		move.b	#2,$18(a0)
 		move.b	#$18,$19(a0)
 		move.b	#4,1(a0)
-		move.w	#$200,($FFFFF760).w ; Sonic's top speed
+		move.w	#$100,($FFFFF760).w ; Sonic's top speed
 		move.w	#$C,($FFFFF762).w ; Sonic's acceleration
 		move.w	#$80,($FFFFF764).w ; Sonic's deceleration
 
@@ -23744,6 +23726,15 @@ Sonic_Move:				; XREF: Obj01_MdNormal
 		bne.w	loc_12FEE
 		tst.w	$3E(a0)
 		bne.w	Obj01_ResetScr
+		btst	#4,($FFFFF602).w
+		beq.s	@notrunning
+		move.w	#$300,($FFFFF760).w ; Sonic's top speed
+		bra.s	@cont
+
+	@notrunning:
+		move.w	#$100,($FFFFF760).w ; Sonic's top speed
+
+	@cont:
 		btst	#2,($FFFFF602).w ; is left being pressed?
 		beq.s	Obj01_NotLeft	; if not, branch
 		bsr.w	Sonic_MoveLeft
@@ -24152,6 +24143,7 @@ loc_1341C:
 		beq.s	@regularjump
 		move.b	#6,$1C(a0)
 		bset	#2,$22(a0)
+		bset	#4,$22(a0)
 		rts
 
 @regularjump
@@ -24196,7 +24188,7 @@ locret_134D2:
 ; End of function Sonic_JumpHeight
 
 Mario_Fall:
-		tst.b	($FFFFF662).w
+		btst	#4,$22(a0)
 		bne.s	@return
 		btst	#1,$22(a0)	; Check if Mario is midair
 		beq.s	@return
@@ -24527,6 +24519,14 @@ locret_1379E:
 
 Sonic_ResetOnFloor:			; XREF: PlatformObject; et al
 		clr.b	($FFFFF662).w
+		btst	#4,$22(a0)
+		beq.s	@notSpinJumping
+		btst	#2,($FFFFFE25).w
+		beq.s	@notSpinJumping
+		bchg	#0,$22(a0)
+
+	@notSpinJumping:
+		bclr	#4,$22(a0)		
 		bclr	#5,$22(a0)
 		bclr	#1,$22(a0)
 		btst	#2,$22(a0)
@@ -24830,7 +24830,7 @@ loc_13A78:
 
 loc_13A9C:
 		lea	(SonAni_Run).l,a1 ; use	running	animation
-		cmpi.w	#$600,d2	; is Sonic at running speed?
+		cmpi.w	#$300,d2	; is Sonic at running speed?
 		bcc.s	loc_13AB4	; if yes, branch
 		lea	(SonAni_Walk).l,a1 ; use walking animation
 		move.b	d0,d1

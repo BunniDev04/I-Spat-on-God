@@ -38,7 +38,7 @@ MarioAni_Jump:	dc.b $3F, $E, $FF, 0
 MarioAni_Fall:	dc.b $3F, $F, $FF, 0
 SonAni_Push:	dc.b $FD, $45, $46, $47, $48, $FF, $FF,	$FF
 SonAni_Wait:	dc.b $3F, 1, $FF, 0
-SonAni_Balance:	dc.b 2, 1, $C, $D, $11, $FF
+SonAni_Balance:	dc.b 1, 1, $C, $D, $11, $FF
 SonAni_LookUp:	dc.b $3F, 2, $FF, 0
 SonAni_Duck:	dc.b $3F, 3, $FF, 0
 SonAni_Warp1:	dc.b $3F, $33, $FF, 0
