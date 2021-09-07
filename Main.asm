@@ -3081,11 +3081,33 @@ Sega_WaitPallet:
 
 		move.b	#$14,($FFFFF62A).w
 		bsr.w	DelayProgram
-		move.w	#$1E,($FFFFF614).w
+		move.w	#180,($FFFFF614).w
 
 Sega_WaitEnd:
 		move.b	#2,($FFFFF62A).w
 		bsr.w	DelayProgram
+MartyrBGDeform:
+        lea ($FFFFCC00),a1
+        moveq   #0,d0
+        move.w  #$DF,d1
+    
+    @clearHScroll:
+        move.l  d0,(a1)+
+        dbf d1,@clearHScroll
+
+        add.w   #2,a1   ; Go to the next word because background stuff ig
+        move.w  #$6F,d2
+        move.w  ($FFFFF5C0).w,d0
+
+    @loop:
+        bsr.w   CalcSine
+        add.w   d0,(a1)
+        add.w   #2,a1
+        sub.w   d0,(a1)
+        add.w   #2,a1
+        dbf d2,@loop
+
+        addi.w  #1,($FFFFF5C0).w
 		tst.w	($FFFFF614).w
 		beq.s	Sega_GotoTitle
 		andi.b	#$80,($FFFFF605).w ; is	Start button pressed?
