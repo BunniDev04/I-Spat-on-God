@@ -31,9 +31,9 @@ Vectors:	dc.l $FFFE00, EntryPoint, BusError, AddressError
 		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap
 Console:	dc.b 'SEGA MEGA DRIVE ' ; Hardware system ID
 Date:		dc.b '(R)BNDV 2021.SEP' ; Release date
-Title_Local:	dc.b 'I SPAT ON GOD                                   ' ; Domestic name
-Title_Int:	dc.b 'I SPAT ON GOD                                   ' ; International name
-Serial:		dc.b 'GM 00001009-00'   ; Serial/version number
+Title_Local:	dc.b 'SUPER MARIOWORLD                                ' ; Domestic name
+Title_Int:	dc.b 'SUPER MARIOWORLD                                ' ; International name
+Serial:		dc.b 'GM B19ED489-00'   ; Serial/version number
 Checksum:	dc.w 0
 		dc.b 'J               ' ; I/O support
 RomStartLoc:	dc.l StartOfRom		; ROM start
@@ -2312,16 +2312,21 @@ Pal_FadeTo2:
 Pal_ToBlack:
 		move.w	d1,(a0)+
 		dbf	d0,Pal_ToBlack	; fill pallet with $000	(black)
-
-		move.w	#$15,d4
+		moveq	#$0E,d4					; MJ: prepare maximum colour check
+		moveq	#$00,d6					; MJ: clear d6
 
 loc_1DCE:
+		bsr.w	RunPLC_RAM
 		move.b	#$12,($FFFFF62A).w
 		bsr.w	DelayProgram
+		bchg	#$00,d6					; MJ: change delay counter
+		beq	loc_1DCE				; MJ: if null, delay a frame
 		bsr.s	Pal_FadeIn
-		bsr.w	RunPLC_RAM
-		dbf	d4,loc_1DCE
-		rts	
+		subq.b	#$02,d4					; MJ: decrease colour check
+		bne	loc_1DCE				; MJ: if it has not reached null, branch
+		move.b	#$12,($FFFFF62A).w			; MJ: wait for V-blank again (so colours transfer)
+		bra	DelayProgram				; MJ: ''
+
 ; End of function Pal_FadeTo
 
 ; ---------------------------------------------------------------------------
@@ -2366,35 +2371,30 @@ locret_1E24:
 
 
 Pal_AddColor:				; XREF: Pal_FadeIn
-		move.w	(a1)+,d2
-		move.w	(a0),d3
-		cmp.w	d2,d3
-		beq.s	loc_1E4E
-		move.w	d3,d1
-		addi.w	#$200,d1	; increase blue	value
-		cmp.w	d2,d1		; has blue reached threshold level?
-		bhi.s	Pal_AddGreen	; if yes, branch
-		move.w	d1,(a0)+	; update pallet
-		rts	
-; ===========================================================================
+		move.b	(a1),d5					; MJ: load blue
+		move.w	(a1)+,d1				; MJ: load green and red
+		move.b	d1,d2					; MJ: load red
+		lsr.b	#$04,d1					; MJ: get only green
+		andi.b	#$0E,d2					; MJ: get only red
+		move.w	(a0),d3					; MJ: load current colour in buffer
+		cmp.b	d5,d4					; MJ: is it time for blue to fade?
+		bhi	FCI_NoBlue				; MJ: if not, branch
+		addi.w	#$0200,d3				; MJ: increase blue
 
-Pal_AddGreen:				; XREF: Pal_AddColor
-		move.w	d3,d1
-		addi.w	#$20,d1		; increase green value
-		cmp.w	d2,d1
-		bhi.s	Pal_AddRed
-		move.w	d1,(a0)+	; update pallet
-		rts	
-; ===========================================================================
+FCI_NoBlue:
+		cmp.b	d1,d4					; MJ: is it time for green to fade?
+		bhi	FCI_NoGreen				; MJ: if not, branch
+		addi.b	#$20,d3					; MJ: increase green
 
-Pal_AddRed:				; XREF: Pal_AddGreen
-		addq.w	#2,(a0)+	; increase red value
-		rts	
-; ===========================================================================
+FCI_NoGreen:
+		cmp.b	d2,d4					; MJ: is it time for red to fade?
+		bhi	FCI_NoRed				; MJ: if not, branch
+		addq.b	#$02,d3					; MJ: increase red
 
-loc_1E4E:				; XREF: Pal_AddColor
-		addq.w	#2,a0
-		rts	
+FCI_NoRed:
+		move.w	d3,(a0)+				; MJ: save colour
+		rts						; MJ: return
+
 ; End of function Pal_AddColor
 
 
@@ -2403,13 +2403,16 @@ loc_1E4E:				; XREF: Pal_AddColor
 
 Pal_FadeFrom:
 		move.w	#$3F,($FFFFF626).w
-		move.w	#$15,d4
+		moveq	#$07,d4					; MJ: set repeat times
+		moveq	#$00,d6					; MJ: clear d6
 
 loc_1E5C:
+		bsr.w	RunPLC_RAM
 		move.b	#$12,($FFFFF62A).w
 		bsr.w	DelayProgram
+		bchg	#$00,d6					; MJ: change delay counter
+		beq	loc_1E5C				; MJ: if null, delay a frame
 		bsr.s	Pal_FadeOut
-		bsr.w	RunPLC_RAM
 		dbf	d4,loc_1E5C
 		rts	
 ; End of function Pal_FadeFrom
@@ -2449,34 +2452,28 @@ loc_1E98:
 
 
 Pal_DecColor:				; XREF: Pal_FadeOut
-		move.w	(a0),d2
-		beq.s	loc_1ECC
-		move.w	d2,d1
-		andi.w	#$E,d1
-		beq.s	Pal_DecGreen
-		subq.w	#2,(a0)+	; decrease red value
-		rts	
-; ===========================================================================
+		move.w	(a0),d5					; MJ: load colour
+		move.w	d5,d1					; MJ: copy to d1
+		move.b	d1,d2					; MJ: load green and red
+		move.b	d1,d3					; MJ: load red
+		andi.w	#$0E00,d1				; MJ: get only blue
+		beq	FCO_NoBlue				; MJ: if blue is finished, branch
+		subi.w	#$0200,d5				; MJ: decrease blue
 
-Pal_DecGreen:				; XREF: Pal_DecColor
-		move.w	d2,d1
-		andi.w	#$E0,d1
-		beq.s	Pal_DecBlue
-		subi.w	#$20,(a0)+	; decrease green value
-		rts	
-; ===========================================================================
+FCO_NoBlue:
+		andi.w	#$00E0,d2				; MJ: get only green (needs to be word)
+		beq	FCO_NoGreen				; MJ: if green is finished, branch
+		subi.b	#$20,d5					; MJ: decrease green
 
-Pal_DecBlue:				; XREF: Pal_DecGreen
-		move.w	d2,d1
-		andi.w	#$E00,d1
-		beq.s	loc_1ECC
-		subi.w	#$200,(a0)+	; decrease blue	value
-		rts	
-; ===========================================================================
+FCO_NoGreen:
+		andi.b	#$0E,d3					; MJ: get only red
+		beq	FCO_NoRed				; MJ: if red is finished, branch
+		subq.b	#$02,d5					; MJ: decrease red
 
-loc_1ECC:				; XREF: Pal_DecColor
-		addq.w	#2,a0
-		rts	
+FCO_NoRed:
+		move.w	d5,(a0)+				; MJ: save new colour
+		rts						; MJ: return
+
 ; End of function Pal_DecColor
 
 ; ---------------------------------------------------------------------------
@@ -23908,7 +23905,7 @@ loc_130BA:
 		addi.b	#$20,d0
 		andi.b	#$C0,d0
 		bne.s	locret_130E8
-		cmpi.w	#$400,d0
+		cmpi.w	#$100,d0
 		blt.s	locret_130E8
 		move.b	#$D,$1C(a0)	; use "stopping" animation
 		bclr	#0,$22(a0)
@@ -23954,7 +23951,7 @@ loc_13120:
 		addi.b	#$20,d0
 		andi.b	#$C0,d0
 		bne.s	locret_1314E
-		cmpi.w	#-$400,d0
+		cmpi.w	#-$100,d0
 		bgt.s	locret_1314E
 		move.b	#$D,$1C(a0)	; use "stopping" animation
 		bset	#0,$22(a0)
@@ -38061,6 +38058,8 @@ loc_71C84:
 
 loc_71C88:
 		move.l	a4,4(a5)
+		btst	#4,($FFFFD022).w	; TEMP REPLACE WITH YOSHI FLAG LATER ******
+		beq.s	locret_71CAA
 		btst	#2,(a5)
 		bne.s	locret_71CAA
 		moveq	#0,d0
