@@ -90,7 +90,7 @@ PLC_LZ:		dc.w $B
 		dc.w $7980
 		dc.l Nem_Burrobot	; burrobot enemy
 		dc.w $94C0
-PLC_LZ2:	dc.w $C
+PLC_LZ2:	dc.w $B
 		dc.l Nem_LzPole		; pole that breaks
 		dc.w $7BC0
 		dc.l Nem_LzDoor2	; large	horizontal door
@@ -99,8 +99,6 @@ PLC_LZ2:	dc.w $C
 		dc.w $7EC0
 		dc.l Nem_Gargoyle	; gargoyle head
 		dc.w $5D20
-		dc.l Nem_LzSonic	; Sonic	holding	his breath
-		dc.w $8800
 		dc.l Nem_LzPlatfm	; rising platform
 		dc.w $89E0
 		dc.l Nem_Orbinaut	; orbinaut enemy
@@ -285,9 +283,7 @@ PLC_Signpost:	dc.w 2
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - beta special stage warp effect
 ; ---------------------------------------------------------------------------
-PLC_Warp:	dc.w 0
-		dc.l Nem_Warp
-		dc.w $A820
+PLC_Warp:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - special stage
 ; ---------------------------------------------------------------------------
@@ -391,11 +387,9 @@ PLC_SpeStResult:dc.w 1
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - ending sequence
 ; ---------------------------------------------------------------------------
-PLC_Ending:	dc.w $E
-		dc.l Nem_GHZ_1st	; GHZ main patterns
-		dc.w 0
+PLC_Ending:	dc.w $C
 		dc.l Nem_GHZ_2nd	; GHZ secondary	patterns
-		dc.w $39A0
+		dc.w 0
 		dc.l Nem_Stalk		; flower stalk
 		dc.w $6B00
 		dc.l Nem_EndFlower	; flowers
@@ -404,8 +398,6 @@ PLC_Ending:	dc.w $E
 		dc.w $78A0
 		dc.l Nem_EndSonic	; Sonic
 		dc.w $7C20
-		dc.l Nem_EndEggman	; Eggman's death (unused)
-		dc.w $A480
 		dc.l Nem_Rabbit		; rabbit
 		dc.w $AA60
 		dc.l Nem_Chicken	; chicken

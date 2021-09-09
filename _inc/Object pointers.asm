@@ -3,11 +3,11 @@
 ; ---------------------------------------------------------------------------
 	dc.l Obj01, ObjPowerUp,	ObjGreenBubble, ObjectFall
 	dc.l ObjectFall, ObjectFall, ObjectFall, Obj08
-	dc.l Obj09, Obj0A, Obj0B, Obj0C
-	dc.l Obj0D, Obj0E, Obj0F, Obj10
+	dc.l ObjectFall, Obj0A, Obj0B, Obj0C
+	dc.l Obj0D, Obj0E, Obj0F, ObjectFall
 	dc.l Obj11, Obj12, Obj13, Obj14
 	dc.l Obj15, Obj16, Obj17, Obj18
-	dc.l Obj19, Obj1A, Obj1B, Obj1C
+	dc.l ObjectFall, Obj1A, Obj1B, Obj1C
 	dc.l Obj1D, Obj1E, Obj1F, Obj20
 	dc.l Obj21, Obj22, Obj23, Obj24
 	dc.l Obj25, Obj26, Obj27, Obj28
@@ -32,7 +32,7 @@
 	dc.l Obj71, Obj72, Obj73, Obj74
 	dc.l Obj75, Obj76, Obj77, Obj78
 	dc.l Obj79, Obj7A, Obj7B, Obj7C
-	dc.l Obj7D, Obj7E, Obj7F, Obj80
-	dc.l Obj81, Obj82, Obj83, Obj84
-	dc.l Obj85, Obj86, Obj87, Obj88
-	dc.l Obj89, Obj8A, Obj8B, Obj8C
+	dc.l Obj7D, Obj7E, Obj7F, ObjectFall
+	dc.l ObjectFall, Obj82, Obj83, Obj84
+	dc.l Obj85, Obj86, ObjectFall, ObjectFall
+	dc.l ObjectFall, Obj8A, ObjectFall, ObjectFall
