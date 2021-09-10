@@ -287,47 +287,7 @@ PLC_Warp:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - special stage
 ; ---------------------------------------------------------------------------
-PLC_SpeStage:	dc.w $10
-		dc.l Nem_SSBgCloud	; bubble and cloud background
-		dc.w 0
-		dc.l Nem_SSBgFish	; bird and fish	background
-		dc.w $A20
-		dc.l Nem_SSWalls	; walls
-		dc.w $2840
-		dc.l Nem_Bumper		; bumper
-		dc.w $4760
-		dc.l Nem_SSGOAL		; GOAL block
-		dc.w $4A20
-		dc.l Nem_SSUpDown	; UP and DOWN blocks
-		dc.w $4C60
-		dc.l Nem_SSRBlock	; R block
-		dc.w $5E00
-		dc.l Nem_SS1UpBlock	; 1UP block
-		dc.w $6E00
-		dc.l Nem_SSEmStars	; emerald collection stars
-		dc.w $7E00
-		dc.l Nem_SSRedWhite	; red and white	block
-		dc.w $8E00
-		dc.l Nem_SSGhost	; ghost	block
-		dc.w $9E00
-		dc.l Nem_SSWBlock	; W block
-		dc.w $AE00
-		dc.l Nem_SSGlass	; glass	block
-		dc.w $BE00
-		dc.l Nem_SSEmerald	; emeralds
-		dc.w $EE00
-		dc.l Nem_SSZone1	; ZONE 1 block
-		dc.w $F2E0
-		dc.l Nem_SSZone2	; ZONE 2 block
-		dc.w $F400
-		dc.l Nem_SSZone3	; ZONE 3 block
-		dc.w $F520
-		dc.l Nem_SSZone4	; ZONE 4 block
-		dc.w $F2E0
-		dc.l Nem_SSZone5	; ZONE 5 block
-		dc.w $F400
-		dc.l Nem_SSZone6	; ZONE 6 block
-		dc.w $F520
+PLC_SpeStage:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - GHZ animals
 ; ---------------------------------------------------------------------------
@@ -379,11 +339,7 @@ PLC_SBZAnimals:	dc.w 1
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - special stage results screen
 ; ---------------------------------------------------------------------------
-PLC_SpeStResult:dc.w 1
-		dc.l Nem_ResultEm	; emeralds
-		dc.w $A820
-		dc.l Nem_MiniSonic	; mini Sonic
-		dc.w $AA20
+PLC_SpeStResult:
 ; ---------------------------------------------------------------------------
 ; Pattern load cues - ending sequence
 ; ---------------------------------------------------------------------------
