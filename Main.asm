@@ -2982,7 +2982,7 @@ SegaScreen:				; XREF: GameModeArray
 		move.w	#$8230,(a6)
 		move.w	#$8407,(a6)
 		move.w	#$8700,(a6)
-		move.w	#$8B00,(a6)
+		move.w	#$8B00|%00000011,(a6)		;Setting HScroll to be every line
 		clr.b	($FFFFF64E).w
 		move	#$2700,sr
 		move.w	($FFFFF60C).w,d0
@@ -3009,35 +3009,33 @@ SegaScreen:				; XREF: GameModeArray
 
 Sega_WaitPallet:
 		move.w	#180,($FFFFF614).w
+		move.w	#0, ($FFFFF5C0).w			;Zero out Counter just in case
 
 Sega_WaitEnd:
 		move.b	#4,($FFFFF62A).w
 		bsr.w	DelayProgram
 MartyrBGDeform:
-        lea ($FFFFCC00),a1
-        moveq   #0,d0
-        move.w  #$DF,d1
-    
-    @clearHScroll:
-        move.l  d0,(a1)+
-        dbf d1,@clearHScroll
+		lea ($FFFFCC00),a1
+		moveq   #0, d0
+		moveq	#0, d3						;Avoid using d1 (Calcsine modifies it)
+		move.w  #224-1, d2					;Line count to decrease (-1 for dbf)
+		move.w  ($FFFFF5C0).w, d0			;Get counter
+		move.w	d0, d3						;d0 will be changed, save counter
 
-        add.w   #2,a1   ; Go to the next word because background stuff ig
-        move.w  #$6F,d2
-        move.w  ($FFFFF5C0).w,d0
-
-    @loop:
-        bsr.w   CalcSine
-        add.w   d0,(a1)
-        add.w   #2,a1
-        sub.w   d0,(a1)
-        add.w   #2,a1
-        dbf d2,@loop
-        addi.w  #1,($FFFFF5C0).w
+	@loop:
+		moveq	#0, d0
+		move.w	d3, d0						;For Calcsine
+		bsr.w   CalcSine
+		lsr.w	#3, d0						;Make the wave smaller
+		addq	#1, d3						;Next line will be at a different pos (Change for wavy-ness)
+		move.l	d0, (a1)+					;Upload to HScroll in RAM (B Plane in bottom word)
+		dbf 	d2, @loop
+		addq	#2,($FFFFF5C0).w			;Incrementing Speed (Change to adjust speed)
+		
 		tst.w	($FFFFF614).w
 		beq.s	Sega_GotoTitle
-		andi.b	#$80,($FFFFF605).w ; is	Start button pressed?
-		beq.s	Sega_WaitEnd	; if not, branch
+		andi.b	#$80,($FFFFF605).w 			; is	Start button pressed?
+		beq.s	Sega_WaitEnd				; if not, branch
 
 Sega_GotoTitle:
 		move.b	#4,($FFFFF600).w ; go to title screen
