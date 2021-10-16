@@ -21925,7 +21925,7 @@ off_1DF38:	dc byte_1DF40-off_1DF38; 0 ; DATA XREF: h+6EB4?o h+6FC4?o ...
 byte_1DF40:	dc.b $1F,  0,$FF	; 0 ; DATA XREF: h+6FC4?o
 byte_1DF43:	dc.b   3,  1,  2,  3,  4,  5,  6,  7,  8,  9,$FD,  0; 0	; DATA XREF: h+6FC4?o
 byte_1DF4F:	dc.b   1, $A, $B, $C, $D, $E, $F,$10,$FF; 0 ; DATA XREF: h+6FC4?o
-byte_1DF58:	dc.b   3,$11,$12,$13,$FC; 0	; DATA XREF: h+6FC4?o
+byte_1DF58:	dc.b   3,$11,$12,$13,$FC, 1; 0	; DATA XREF: h+6FC4?o
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
