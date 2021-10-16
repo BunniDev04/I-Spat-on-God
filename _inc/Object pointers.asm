@@ -2,7 +2,7 @@
 ; Object pointers
 ; ---------------------------------------------------------------------------
 	dc.l Obj01, ObjPowerUp,	ObjGreenBubble, ObjectFall
-	dc.l ObjectFall, ObjectFall, ObjectFall, Obj08
+	dc.l SpinDash_dust, ObjectFall, ObjectFall, Obj08
 	dc.l ObjectFall, Obj0A, Obj0B, Obj0C
 	dc.l Obj0D, Obj0E, Obj0F, ObjectFall
 	dc.l Obj11, Obj12, Obj13, Obj14
