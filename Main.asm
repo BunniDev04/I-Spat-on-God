@@ -3027,7 +3027,10 @@ MartyrBGDeform:
 		move.w	d3, d0						;For Calcsine
 		bsr.w   CalcSine
 		lsr.w	#3, d0						;Make the wave smaller
-		addq	#1, d3						;Next line will be at a different pos (Change for wavy-ness)
+		neg.w	d3							;Flip per-line counter
+		bmi		@OddFrame					;Only add 1 to it on an even frame
+		addq	#2, d3						;Next line will be at a different pos (Change for wavy-ness)
+	@OddFrame:
 		move.l	d0, (a1)+					;Upload to HScroll in RAM (B Plane in bottom word)
 		dbf 	d2, @loop
 		addq	#2,($FFFFF5C0).w			;Incrementing Speed (Change to adjust speed)
