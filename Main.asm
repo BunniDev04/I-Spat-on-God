@@ -3045,13 +3045,15 @@ SegaScreen:				; XREF: GameModeArray
 		move.b	#$E4,d0
 		bsr.w	PlaySound_Special ; stop music
 		bsr.w	ClearPLC
-		bsr.w	Pal_FadeFrom
+		bsr.w	ClearScreen
+		bsr.w	Pal_FadeOut
 		lea	($C00004).l,a6
 		move.w	#$8004,(a6)
 		move.w	#$8230,(a6)
 		move.w	#$8407,(a6)
 		move.w	#$8700,(a6)
 		move.w	#$8B00|%00000011,(a6)		;Setting HScroll to be every line
+		move.w #$8C00|%10000001,(a6)
 		clr.b	($FFFFF64E).w
 		move	#$2700,sr
 		move.w	($FFFFF60C).w,d0
@@ -3062,12 +3064,20 @@ SegaScreen:				; XREF: GameModeArray
 		lea	(Nem_Martyr).l,a0 ; load Sega	logo patterns
 		bsr.w	NemDec
 		lea	($FF0000).l,a1
-		lea	(Map_Martyr).l,a0 ; load Sega	logo mappings
+		lea	(Map_MartyrBackground).l,a0 ; load Sega	logo mappings
 		move.w	#0,d0
 		bsr.w	EniDec
 		lea	($FF0000).l,a1
 		move.l	#$60000003,d0
-		moveq	#31,d1
+		moveq	#43,d1
+		moveq	#$1B,d2
+		bsr.w	ShowVDPGraphics
+		lea	(Map_MartyrForeground).l,a0 ; load mappings for	Japanese credits
+		move.w	#0,d0
+		lea	($FF0000).l,a1
+		bsr.w	EniDec
+		move.l	#$40000003,d0
+		moveq	#$27,d1
 		moveq	#$1B,d2
 		bsr.w	ShowVDPGraphics
 		moveq	#0,d0
@@ -3077,7 +3087,7 @@ SegaScreen:				; XREF: GameModeArray
 		move.w	d0,($C00004).l
 
 Sega_WaitPallet:
-		move.w	#180,($FFFFF614).w
+		move.w	#60*10,($FFFFF614).w
 		move.w	#0, ($FFFFF5C0).w			;Zero out Counter just in case
 
 Sega_WaitEnd:
@@ -3095,7 +3105,7 @@ MartyrBGDeform:
 		moveq	#0, d0
 		move.w	d3, d0						;For Calcsine
 		bsr.w   CalcSine
-		lsr.w	#3, d0						;Make the wave smaller
+		lsr.w	#1, d0						;Make the wave smaller
 		neg.w	d3							;Flip per-line counter
 		bmi		@OddFrame					;Only add 1 to it on an even frame
 		addq	#2, d3						;Next line will be at a different pos (Change for wavy-ness)
@@ -3113,16 +3123,6 @@ Sega_GotoTitle:
 		move.b	#4,($FFFFF600).w ; go to title screen
 		rts	
 ; ===========================================================================
-
-Nem_Martyr:
-		incbin	"MartyrSplash/tiles.nem"
-
-Map_Martyr:
-		incbin	"MartyrSplash/map.eni"
-
-Pal_Martyr:
-		incbin	"MartyrSplash/palette.pal"
-		even
 
 ; ---------------------------------------------------------------------------
 ; Title	screen
@@ -3143,6 +3143,7 @@ TitleScreen:				; XREF: GameModeArray
 		move.w	#$9200,(a6)
 		move.w	#$8B03,(a6)
 		move.w	#$8720,(a6)
+		move.w #$8C00|0,(a6)
 		clr.b	($FFFFF64E).w
 		bsr.w	ClearScreen
 		lea	($FFFFD000).w,a1
@@ -34971,7 +34972,20 @@ ObjPos_End:	incbin	objpos\ending.bin
 		even
 ObjPos_Null:	dc.b $FF, $FF, 0, 0, 0,	0
 ; ---------------------------------------------------------------------------
-		incbin	misc\padding4.bin
+Nem_Martyr:
+		incbin	"MartyrSplash/tiles.nem"
+		even
+
+Map_MartyrBackground:
+		incbin	"MartyrSplash/map.eni"
+		even
+
+Map_MartyrForeground:
+		incbin	"MartyrSplash/fg.eni"
+		even
+
+Pal_Martyr:
+		incbin	"MartyrSplash/palette.pal"
 		even
 
 Go_SoundTypes:	dc.l SoundTypes		; XREF: Sound_Play
