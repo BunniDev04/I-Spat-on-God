@@ -240,7 +240,7 @@ MainGameLoop:
 ; ---------------------------------------------------------------------------
 
 GameModeArray:
-		bra.w	SegaScreen	; Sega Screen ($00)
+		bra.w	MartyrSplash	; Sega Screen ($00)
 ; ===========================================================================
 		bra.w	TitleScreen	; Title	Screen ($04)
 ; ===========================================================================
@@ -1161,7 +1161,7 @@ Pause_SlowMo:				; XREF: PauseGame
 ; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
 
 
-ShowVDPGraphics:			; XREF: SegaScreen; TitleScreen; SS_BGLoad
+ShowVDPGraphics:			; XREF: MartyrSplash; TitleScreen; SS_BGLoad
 		lea	($C00000).l,a6
 		move.l	#$800000,d4
 
@@ -2669,107 +2669,6 @@ loc_2006:				; XREF: Pal_AddColor2
 ; End of function Pal_AddColor2
 
 ; ---------------------------------------------------------------------------
-; Pallet cycling routine - Sega	logo
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-
-PalCycle_Sega:				; XREF: SegaScreen
-		tst.b	($FFFFF635).w
-		bne.s	loc_206A
-		lea	($FFFFFB20).w,a1
-		lea	(Pal_Sega1).l,a0
-		moveq	#5,d1
-		move.w	($FFFFF632).w,d0
-
-loc_2020:
-		bpl.s	loc_202A
-		addq.w	#2,a0
-		subq.w	#1,d1
-		addq.w	#2,d0
-		bra.s	loc_2020
-; ===========================================================================
-
-loc_202A:				; XREF: PalCycle_Sega
-		move.w	d0,d2
-		andi.w	#$1E,d2
-		bne.s	loc_2034
-		addq.w	#2,d0
-
-loc_2034:
-		cmpi.w	#$60,d0
-		bcc.s	loc_203E
-		move.w	(a0)+,(a1,d0.w)
-
-loc_203E:
-		addq.w	#2,d0
-		dbf	d1,loc_202A
-		move.w	($FFFFF632).w,d0
-		addq.w	#2,d0
-		move.w	d0,d2
-		andi.w	#$1E,d2
-		bne.s	loc_2054
-		addq.w	#2,d0
-
-loc_2054:
-		cmpi.w	#$64,d0
-		blt.s	loc_2062
-		move.w	#$401,($FFFFF634).w
-		moveq	#-$C,d0
-
-loc_2062:
-		move.w	d0,($FFFFF632).w
-		moveq	#1,d0
-		rts	
-; ===========================================================================
-
-loc_206A:				; XREF: loc_202A
-		subq.b	#1,($FFFFF634).w
-		bpl.s	loc_20BC
-		move.b	#4,($FFFFF634).w
-		move.w	($FFFFF632).w,d0
-		addi.w	#$C,d0
-		cmpi.w	#$30,d0
-		bcs.s	loc_2088
-		moveq	#0,d0
-		rts	
-; ===========================================================================
-
-loc_2088:				; XREF: loc_206A
-		move.w	d0,($FFFFF632).w
-		lea	(Pal_Sega2).l,a0
-		lea	(a0,d0.w),a0
-		lea	($FFFFFB04).w,a1
-		move.l	(a0)+,(a1)+
-		move.l	(a0)+,(a1)+
-		move.w	(a0)+,(a1)
-		lea	($FFFFFB20).w,a1
-		moveq	#0,d0
-		moveq	#$2C,d1
-
-loc_20A8:
-		move.w	d0,d2
-		andi.w	#$1E,d2
-		bne.s	loc_20B2
-		addq.w	#2,d0
-
-loc_20B2:
-		move.w	(a0),(a1,d0.w)
-		addq.w	#2,d0
-		dbf	d1,loc_20A8
-
-loc_20BC:
-		moveq	#1,d0
-		rts	
-; End of function PalCycle_Sega
-
-; ===========================================================================
-
-Pal_Sega1:	incbin	pallet\sega1.bin
-Pal_Sega2:	incbin	pallet\sega2.bin
-
-; ---------------------------------------------------------------------------
 ; Subroutines to load pallets
 ; ---------------------------------------------------------------------------
 
@@ -2860,7 +2759,6 @@ PalPointers:
 ; ---------------------------------------------------------------------------
 ; Pallet data
 ; ---------------------------------------------------------------------------
-Pal_SegaBG:	incbin	pallet\sega_bg.bin
 Pal_Title:	incbin	pallet\title.bin
 Pal_LevelSel:	incbin	pallet\levelsel.bin
 Pal_Sonic:	incbin	pallet\sonic.bin
@@ -3037,92 +2935,7 @@ Angle_Data:	incbin	misc\angles.bin
 
 ; ===========================================================================
 
-; ---------------------------------------------------------------------------
-; Sega screen
-; ---------------------------------------------------------------------------
-
-SegaScreen:				; XREF: GameModeArray
-		move.b	#$E4,d0
-		bsr.w	PlaySound_Special ; stop music
-		bsr.w	ClearPLC
-		bsr.w	ClearScreen
-		bsr.w	Pal_FadeOut
-		lea	($C00004).l,a6
-		move.w	#$8004,(a6)
-		move.w	#$8230,(a6)
-		move.w	#$8407,(a6)
-		move.w	#$8700,(a6)
-		move.w	#$8B00|%00000011,(a6)		;Setting HScroll to be every line
-		move.w #$8C00|%10000001,(a6)
-		clr.b	($FFFFF64E).w
-		move	#$2700,sr
-		move.w	($FFFFF60C).w,d0
-		andi.b	#$BF,d0
-		move.w	d0,($C00004).l
-		bsr.w	ClearScreen
-		move.l	#$40000000,($C00004).l
-		lea	(Nem_Martyr).l,a0 ; load Sega	logo patterns
-		bsr.w	NemDec
-		lea	($FF0000).l,a1
-		lea	(Map_MartyrBackground).l,a0 ; load Sega	logo mappings
-		move.w	#0,d0
-		bsr.w	EniDec
-		lea	($FF0000).l,a1
-		move.l	#$60000003,d0
-		moveq	#43,d1
-		moveq	#$1B,d2
-		bsr.w	ShowVDPGraphics
-		lea	(Map_MartyrForeground).l,a0 ; load mappings for	Japanese credits
-		move.w	#0,d0
-		lea	($FF0000).l,a1
-		bsr.w	EniDec
-		move.l	#$40000003,d0
-		moveq	#$27,d1
-		moveq	#$1B,d2
-		bsr.w	ShowVDPGraphics
-		moveq	#0,d0
-		bsr.w	PalLoad2	; load continue	screen pallet
-		move.w	($FFFFF60C).w,d0
-		ori.b	#$40,d0
-		move.w	d0,($C00004).l
-
-Sega_WaitPallet:
-		move.w	#60*10,($FFFFF614).w
-		move.w	#0, ($FFFFF5C0).w			;Zero out Counter just in case
-
-Sega_WaitEnd:
-		move.b	#4,($FFFFF62A).w
-		bsr.w	DelayProgram
-MartyrBGDeform:
-		lea ($FFFFCC00),a1
-		moveq   #0, d0
-		moveq	#0, d3						;Avoid using d1 (Calcsine modifies it)
-		move.w  #224-1, d2					;Line count to decrease (-1 for dbf)
-		move.w  ($FFFFF5C0).w, d0			;Get counter
-		move.w	d0, d3						;d0 will be changed, save counter
-
-	@loop:
-		moveq	#0, d0
-		move.w	d3, d0						;For Calcsine
-		bsr.w   CalcSine
-		lsr.w	#1, d0						;Make the wave smaller
-		neg.w	d3							;Flip per-line counter
-		bmi		@OddFrame					;Only add 1 to it on an even frame
-		addq	#2, d3						;Next line will be at a different pos (Change for wavy-ness)
-	@OddFrame:
-		move.l	d0, (a1)+					;Upload to HScroll in RAM (B Plane in bottom word)
-		dbf 	d2, @loop
-		addq	#2,($FFFFF5C0).w			;Incrementing Speed (Change to adjust speed)
-		
-		tst.w	($FFFFF614).w
-		beq.s	Sega_GotoTitle
-		andi.b	#$80,($FFFFF605).w 			; is	Start button pressed?
-		beq.s	Sega_WaitEnd				; if not, branch
-
-Sega_GotoTitle:
-		move.b	#4,($FFFFF600).w ; go to title screen
-		rts	
-; ===========================================================================
+		include	"MartyrSplash/code.asm"
 
 ; ---------------------------------------------------------------------------
 ; Title	screen
@@ -34972,19 +34785,19 @@ ObjPos_End:	incbin	objpos\ending.bin
 		even
 ObjPos_Null:	dc.b $FF, $FF, 0, 0, 0,	0
 ; ---------------------------------------------------------------------------
-Nem_Martyr:
+MartyrTiles:
 		incbin	"MartyrSplash/tiles.nem"
 		even
 
-Map_MartyrBackground:
-		incbin	"MartyrSplash/map.eni"
+MartyrBGMap:
+		incbin	"MartyrSplash/bgmap.eni"
 		even
 
-Map_MartyrForeground:
-		incbin	"MartyrSplash/fg.eni"
+MartyrFGMap:
+		incbin	"MartyrSplash/fgmap.eni"
 		even
 
-Pal_Martyr:
+MartyrPal:
 		incbin	"MartyrSplash/palette.pal"
 		even
 
