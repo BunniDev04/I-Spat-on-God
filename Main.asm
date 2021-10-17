@@ -41,9 +41,10 @@ RomStartLoc:	dc.l StartOfRom		; ROM start
 RomEndLoc:	dc.l EndOfRom-1		; ROM end
 RamStartLoc:	dc.l $FF0000		; RAM start
 RamEndLoc:	dc.l $FFFFFF		; RAM end
-SRAMSupport:	dc.l $20202020		; change to $5241E020 to create	SRAM
-		dc.l $20202020		; SRAM start
-		dc.l $20202020		; SRAM end
+SRAMSupport:
+		dc.b	"RA",$F8,$20
+		dc.l $200001		; SRAM start
+		dc.l $20FFFF		; SRAM end
 Notes:		dc.b '                                                    '
 Region:		dc.b 'JUE             ' ; Region
 
