@@ -1562,9 +1562,10 @@
 000001A4 0000 0000                  RomEndLoc:	dc.l EndOfRom-1		; ROM end
 000001A8 00FF 0000                  RamStartLoc:	dc.l $FF0000		; RAM start
 000001AC 00FF FFFF                  RamEndLoc:	dc.l $FFFFFF		; RAM end
-000001B0 2020 2020                  SRAMSupport:	dc.l $20202020		; change to $5241E020 to create	SRAM
-000001B4 2020 2020                  		dc.l $20202020		; SRAM start
-000001B8 2020 2020                  		dc.l $20202020		; SRAM end
+000001B0                            SRAMSupport:
+000001B0 5241 F820                  		dc.b	"RA",$F8,$20
+000001B4 0020 0001                  		dc.l $200001		; SRAM start
+000001B8 0020 FFFF                  		dc.l $20FFFF		; SRAM end
 000001BC 2020 2020 2020 2020 2020+  Notes:		dc.b '                                                    '
 000001F0 4A55 4520 2020 2020 2020+  Region:		dc.b 'JUE             ' ; Region
 00000200                            
@@ -4349,7 +4350,7 @@
 000029F0 303C 0000                  		move.w	#0,d0
 000029F4 6100 EA36                  		bsr.w	EniDec
 000029F8 43F9 00FF 0000             		lea	($FF0000).l,a1
-000029FE 203C 6000 0003             		move.l	#$60000003,d0	; Write to the background
+000029FE 203C 5FFC 0003             		move.l	#$5FFC0003,d0	; Write to the background
 00002A04 722B                       		moveq	#44-1,d1	; Width
 00002A06 741B                       		moveq	#28-1,d2	; Height
 00002A08 6100 E694                  		bsr.w	ShowVDPGraphics
@@ -4390,17 +4391,17 @@
 00002A6A 7000                       		moveq	#0, d0
 00002A6C 3003                       		move.w	d3, d0						;For Calcsine
 00002A6E 6100 FAE6                  		bsr.w   CalcSine
-00002A72 E248                       		lsr.w	#1, d0						;Make the wave smaller
+00002A72 E648                       		lsr.w	#3, d0						;Make the wave smaller
 00002A74 4443                       		neg.w	d3							;Flip per-line counter
 00002A76 6B00 0000                  		bmi		@OddFrame					;Only add 1 to it on an even frame
-00002A7A 5443                       		addq	#2, d3						;Next line will be at a different pos (Change for wavy-ness)
+00002A7A 5A43                       		addq	#5, d3						;Next line will be at a different pos (Change for wavy-ness)
 00002A7C                            	@OddFrame:
 00002A7C 22C0                       		move.l	d0, (a1)+					;Upload to HScroll in RAM (B Plane in bottom word)
 00002A7E 51CA FFEA                  		dbf 	d2, @loop
 00002A82 5478 F5C0                  		addq	#2,($FFFFF5C0).w			;Incrementing Speed (Change to adjust speed)
 00002A86                            		
 00002A86 4A78 F614                  		tst.w	($FFFFF614).w	; Check if the timer is up
-00002A8A 6700                       		beq.s	MartyrEnd	; If so, go to the title screen
+00002A8A 67C2                       		beq.s	MartyrLoop	; If so, go to the title screen
 00002A8C 0238 0080 F605             		andi.b	#$80,($FFFFF605).w	; Check if start was pressed
 00002A92 67BA                       		beq.s	MartyrLoop	; If not, continue looping until either start or the timer is up
 00002A94                            

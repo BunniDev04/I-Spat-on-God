@@ -33,7 +33,7 @@ MartyrSplash:
 		move.w	#0,d0
 		bsr.w	EniDec
 		lea	($FF0000).l,a1
-		move.l	#$60000003,d0	; Write to the background
+		move.l	#$5FFC0003,d0	; Write to the background
 		moveq	#44-1,d1	; Width
 		moveq	#28-1,d2	; Height
 		bsr.w	ShowVDPGraphics
@@ -74,17 +74,17 @@ MartyrBGDeform:
 		moveq	#0, d0
 		move.w	d3, d0						;For Calcsine
 		bsr.w   CalcSine
-		lsr.w	#1, d0						;Make the wave smaller
+		lsr.w	#3, d0						;Make the wave smaller
 		neg.w	d3							;Flip per-line counter
 		bmi		@OddFrame					;Only add 1 to it on an even frame
-		addq	#2, d3						;Next line will be at a different pos (Change for wavy-ness)
+		addq	#5, d3						;Next line will be at a different pos (Change for wavy-ness)
 	@OddFrame:
 		move.l	d0, (a1)+					;Upload to HScroll in RAM (B Plane in bottom word)
 		dbf 	d2, @loop
 		addq	#2,($FFFFF5C0).w			;Incrementing Speed (Change to adjust speed)
 		
 		tst.w	($FFFFF614).w	; Check if the timer is up
-		beq.s	MartyrEnd	; If so, go to the title screen
+		beq.s	MartyrLoop	; If so, go to the title screen
 		andi.b	#$80,($FFFFF605).w	; Check if start was pressed
 		beq.s	MartyrLoop	; If not, continue looping until either start or the timer is up
 
