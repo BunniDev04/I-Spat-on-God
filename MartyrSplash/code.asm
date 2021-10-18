@@ -84,7 +84,7 @@ MartyrBGDeform:
 		addq	#2,($FFFFF5C0).w			;Incrementing Speed (Change to adjust speed)
 		
 		tst.w	($FFFFF614).w	; Check if the timer is up
-		beq.s	MartyrLoop	; If so, go to the title screen
+		beq.s	MartyrEnd	; If so, go to the title screen
 		andi.b	#$80,($FFFFF605).w	; Check if start was pressed
 		beq.s	MartyrLoop	; If not, continue looping until either start or the timer is up
 
